@@ -34,7 +34,8 @@ export default class LoginScreen extends React.Component {
     }
     
     login = () => {
-        fetch('localhost:3000/users', {
+        alert("Login entered.");
+        fetch('http://10.0.2.2:3000/user', {
             method: "POST",
             headers: {
                 "Accept": "application/json",
@@ -45,19 +46,20 @@ export default class LoginScreen extends React.Component {
                 password: this.state.password
             })
         })
-            .then((response) => response.json())
-            .then((res) => {
-                if(res.success === true) {
-                    AsyncStorage.setItem('user', res.user);
-                    //This controls the switch navigator's state
-                    this.props.navigation.navigate('App');
-                }
+        .then((response) => response.json())
+        .then((res) => {
+            alert(res.message);
+            if(res.success === true) {
+                AsyncStorage.setItem('user', res.user);
+                //This controls the switch navigator's state
+                this.props.navigation.navigate('App');
+            }
 
-                else {
-                    alert(res.message);
-                }
-            })
-            .done();
+            else {
+                alert(res.message);
+            }
+        })
+        .done();
     }
 
     render() {
