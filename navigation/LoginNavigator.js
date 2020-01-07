@@ -5,7 +5,7 @@ import { createBottomTabNavigator } from 'react-navigation-tabs';
 
 import TabBarIcon from '../components/TabBarIcon';
 import LoginScreen from '../screens/LoginScreen';
-import SettingsScreen from '../screens/SettingsScreen';
+import RegisterScreen from '../screens/RegisterScreen';
 
 const config = Platform.select({
   web: { headerMode: 'screen' },
@@ -34,27 +34,27 @@ LoginStack.navigationOptions = {
   ),
 };
 
-const SettingsStack = createStackNavigator(
+const RegisterStack = createStackNavigator(
   {
-    Settings: SettingsScreen,
+    Register: RegisterScreen,
   },
   config
 );
 
-SettingsStack.navigationOptions = {
-  tabBarLabel: 'Settings',
+RegisterStack.navigationOptions = {
+  tabBarLabel: 'Register',
   tabBarIcon: ({ focused }) => (
     <TabBarIcon focused={focused} name={Platform.OS === 'ios' ? 'ios-options' : 'md-options'} />
   ),
 };
 
-SettingsStack.path = '';
+RegisterStack.path = '';
 
 LoginStack.path = '';
 
 const tabNavigator = createBottomTabNavigator({
   LoginStack,
-  SettingsStack,
+  RegisterStack,
 });
 
 tabNavigator.path = '';
