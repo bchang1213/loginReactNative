@@ -16,7 +16,7 @@ export default class LoginScreen extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            username: '',
+            email: '',
             password: '',
         };
     }
@@ -41,13 +41,13 @@ export default class LoginScreen extends React.Component {
                 "Content-Type": "application/json",
             },
             body: JSON.stringify({
-                username: this.state.username,
+                email: this.state.email,
                 password: this.state.password
             })
         })
         .then((response) => response.json())
         .then((res) => {
-            alert(res.success);
+            alert(JSON.stringify(res.success, null, 2));
             if(res.success) {
                 AsyncStorage.setItem('user', res.user);
                 //This controls the switch navigator's state
@@ -69,8 +69,8 @@ export default class LoginScreen extends React.Component {
                         Login
                     </Text>
 
-                    <TextInput style={styles.textInput} placeholder="Username"
-                        onChangeText={ (username)=> this.setState({username})}
+                    <TextInput style={styles.textInput} placeholder="Email"
+                        onChangeText={ (email)=> this.setState({email})}
                         underlineColorAndroid='transparent'
                     />
                     <TextInput style={styles.textInput} placeholder="Password"

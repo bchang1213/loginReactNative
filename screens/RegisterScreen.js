@@ -64,15 +64,16 @@ export default class RegisterScreen extends React.Component {
         })
         .then((response) => response.json())
         .then((res) => {
-            alert(res.success);
+            
             if(res.success) {
+            	alert(res.success);
                 AsyncStorage.setItem('user', res.user);
                 //This controls the switch navigator's state
                 this.props.navigation.navigate('App');
             }
 
             else {
-                alert(res.error);
+         	    alert("Error: " + res.error.detail);
             }
         })
         .done();
