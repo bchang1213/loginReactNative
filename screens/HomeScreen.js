@@ -7,12 +7,20 @@ import {
 	AsyncStorage,
 	View,
 } from 'react-native';
+import { Video } from 'expo-av';
 
 export default class HomeScreen extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			user: null
+			user_id: null,
+			user_email: '',
+			user_firstName: '',
+			user_lastName: '',
+			user_team: '',
+			user_professor: '',
+			user_username: '',
+			user_role: 0
 		};
 	}
 
@@ -25,7 +33,15 @@ export default class HomeScreen extends React.Component {
             var value = await AsyncStorage.getItem('user');
             if (value !== null) {
                 //This Controls switch navigator's state
-                this.setState({user: value});
+                var userJSON = JSON.parse(value);
+                this.setState({user_id: userJSON.id});
+                this.setState({user_email: userJSON.email});
+                this.setState({user_firstName: userJSON.first_name});
+                this.setState({user_lastName: userJSON.last_name});
+                this.setState({user_team: userJSON.user_team});
+                this.setState({user_professor: userJSON.professor});
+                this.setState({user_username: userJSON.username});
+                this.setState({user_role: userJSON.user_role});
             }
         }
         catch (error) {
@@ -34,12 +50,6 @@ export default class HomeScreen extends React.Component {
 
 
     }
-
-	logOut = () => {
-		alert("logging out");
-		AsyncStorage.removeItem("user");
-		this.props.navigation.navigate('Auth');
-	}
 
 	getVideos = () => {
 		fetch('http://10.0.2.2:3000/getAllVimeos', {
@@ -63,22 +73,25 @@ export default class HomeScreen extends React.Component {
 		.done();
 	}
 
+	handleVideoMount = ref => {
+		this.player = ref;
+	};
+
 	render() {
 		return (
-			<View style={styles.container} >
-				{this.state.user ? <Text>{this.state.user}</Text> : null}
-				<TouchableOpacity
-					style={styles.btn}
-					onPress={this.getVideos}
-				>
-					<Text>get Videos</Text>
-				</TouchableOpacity>
-				<TouchableOpacity
-					style={styles.btn}
-					onPress={this.logOut}
-				>
-					<Text>Log Out</Text>
-				</TouchableOpacity>
+			<View style={styles.container}>
+				<Video
+					source={ require('./small.mp4') }
+					rate={1.0}
+					volume={1.0}
+					isMuted={false}
+					ref={this.handleVideoMount}
+					useNativeControls={true}
+					resizeMode="cover"
+					shouldPlay
+					isLooping
+					style={{ width: 300, height: 300 }}
+				/>
 			</View>
 		);
 	}
@@ -117,5 +130,12 @@ const styles = StyleSheet.create({
         padding: 20,
         backgroundColor: "#01c853",
         alignItems: "center"
-    }
+    },
+	backgroundVideo: {
+		position: 'absolute',
+		top: 0,
+		left: 0,
+		bottom: 0,
+		right: 0,
+	}
 });
