@@ -5,91 +5,104 @@ import {
   TextInput,
   TouchableOpacity,
   KeyboardAvoidingView,
-  AsyncStorage,
   ScrollView,
   Image,
+  AsyncStorage,
   View,
 } from 'react-native';
-
 export default class LoginScreen extends React.Component {
 
-    constructor(props) {
-        super(props);
-        this.state = {
-            email: '',
-            password: '',
-        };
-    }
+	constructor(props) {
+		super(props);
+		this.state = {
+			email: '',
+			password: '',
+		};
+	}
 
-    componentDidMount () {
-        this._loadInitialState().done();
-    }
+	componentDidMount () {
+		this._loadInitialState().done();
+	}
 
-    _loadInitialState = async () => {
-        var value = await AsyncStorage.getItem('user');
-        if (value !== null) {
-            //This Controls switch navigator's state
-            this.props.navigation.navigate('App');
-        }
-    }
-    
-    login = () => {
-        fetch('http://10.0.2.2:3000/signinUser', {
-            method: "POST",
-            headers: {
-                "Accept": "application/json",
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                email: this.state.email,
-                password: this.state.password
-            })
-        })
-        .then((response) => response.json())
-        .then((res) => {
-            alert(JSON.stringify(res.success, null, 2));
-            if(res.success) {
-                AsyncStorage.setItem('user', res.user);
-                //This controls the switch navigator's state
-                this.props.navigation.navigate('App');
-            }
+	_loadInitialState = async () => {
+		try {
+			var value = await AsyncStorage.getItem('user');
+			if (value !== null) {
+				//This Controls switch navigator's state
+				this.props.navigation.navigate('App');
+			}
+		}
+		catch (error) {
+			console.log(error);
+		}
+	}
 
-            else {
-                alert(res.error);
-            }
-        })
-        .done();
-    }
+	storeData = async (key, value) => {
+		//key and value are both strings
+		try {
+			await AsyncStorage.setItem(key, value)
+		} catch (e) {
+			// saving error
+			console.log(e);
+		}
+	}
+	
+	login = () => {
+		fetch('http://10.0.2.2:3000/signinUser', {
+			method: "POST",
+			headers: {
+				"Accept": "application/json",
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({
+				email: this.state.email,
+				password: this.state.password
+			})
+		})
+		.then((response) => response.json())
+		.then((res) => {
+			if(res.success) {
+				this.storeData("user", JSON.stringify(res.success));
+				//This controls the switch navigator's state
+				this.props.navigation.navigate('App');
+			}
 
-    render() {
-        return (
-            <KeyboardAvoidingView style={styles.wrapper} behavior='padding'>
-                <View style={styles.container}>
-                    <Text style={styles.header}>
-                        Login
-                    </Text>
+			else {
+				alert(res.error);
+			}
+		})
+		.done();
+	}
 
-                    <TextInput style={styles.textInput} placeholder="Email"
-                        onChangeText={ (email)=> this.setState({email})}
-                        underlineColorAndroid='transparent'
-                    />
-                    <TextInput style={styles.textInput} placeholder="Password"
-                        onChangeText={ (password)=> this.setState({password})}
-                        underlineColorAndroid='transparent'
-                        secureTextEntry={true}
-                    />
+	render() {
+		return (
+			<KeyboardAvoidingView style={styles.wrapper} behavior='padding'>
+				<View style={styles.container}>
+					<Text style={styles.header}>
+						Login
+					</Text>
 
-                    <TouchableOpacity
-                        style={styles.btn}
-                        onPress={this.login}
-                    >
-                    <Text>Log In</Text>
-                    </TouchableOpacity>
+					<TextInput style={styles.textInput} placeholder="Email"
+						onChangeText={ (email)=> this.setState({email})}
+						underlineColorAndroid='transparent'
+					/>
+					<TextInput style={styles.textInput} placeholder="Password"
+						onChangeText={ (password)=> this.setState({password})}
+						underlineColorAndroid='transparent'
+						secureTextEntry={true}
+					/>
 
-                </View>
-            </KeyboardAvoidingView>
-        );
-    }
+					<TouchableOpacity
+						style={styles.btn}
+						onPress={this.login}
+					>
+					<Text>Log In</Text>
+					</TouchableOpacity>
+
+				</View>
+			</KeyboardAvoidingView>
+		);
+	}
 }
 
 LoginScreen.navigationOptions = {
@@ -97,33 +110,33 @@ LoginScreen.navigationOptions = {
 };
 
 const styles = StyleSheet.create({
-    wrapper : {
-        flex: 1,
-    },
-    container: {
-        flex: 1,
-        alignItems: "center",
-        justifyContent: "center",
-        backgroundColor: "#2896d3",
-        paddingLeft: 40,
-        paddingRight: 40
-    },
-    header : {
-        fontSize: 24,
-        marginBottom: 60,
-        color: "#fff",
-        fontWeight: "bold",
-    },
-    textInput: {
-        alignSelf: "stretch",
-        padding: 16,
-        marginBottom: 20,
-        backgroundColor: "#fff"
-    },
-    btn: {
-        alignSelf: "stretch",
-        padding: 20,
-        backgroundColor: "#01c853",
-        alignItems: "center"
-    }
+	wrapper : {
+		flex: 1,
+	},
+	container: {
+		flex: 1,
+		alignItems: "center",
+		justifyContent: "center",
+		backgroundColor: "#2896d3",
+		paddingLeft: 40,
+		paddingRight: 40
+	},
+	header : {
+		fontSize: 24,
+		marginBottom: 60,
+		color: "#fff",
+		fontWeight: "bold",
+	},
+	textInput: {
+		alignSelf: "stretch",
+		padding: 16,
+		marginBottom: 20,
+		backgroundColor: "#fff"
+	},
+	btn: {
+		alignSelf: "stretch",
+		padding: 20,
+		backgroundColor: "#01c853",
+		alignItems: "center"
+	}
 });

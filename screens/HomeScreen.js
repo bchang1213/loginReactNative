@@ -12,8 +12,7 @@ export default class HomeScreen extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			email: '',
-			password: '',
+			user: null
 		};
 	}
 
@@ -21,12 +20,25 @@ export default class HomeScreen extends React.Component {
 		this._loadInitialState().done();
 	}
 
-	_loadInitialState = async () => {
-		var value = await AsyncStorage.getItem('user');
-		if (value === null) {
-			//This Controls switch navigator's state
-			// this.props.navigation.navigate('Auth');
-		}
+    _loadInitialState = async () => {
+        try {
+            var value = await AsyncStorage.getItem('user');
+            if (value !== null) {
+                //This Controls switch navigator's state
+                this.setState({user: value});
+            }
+        }
+        catch (error) {
+            console.log(error);
+        }
+
+
+    }
+
+	logOut = () => {
+		alert("logging out");
+		AsyncStorage.removeItem("user");
+		this.props.navigation.navigate('Auth');
 	}
 
 	getVideos = () => {
@@ -54,11 +66,18 @@ export default class HomeScreen extends React.Component {
 	render() {
 		return (
 			<View style={styles.container} >
+				{this.state.user ? <Text>{this.state.user}</Text> : null}
 				<TouchableOpacity
 					style={styles.btn}
 					onPress={this.getVideos}
 				>
 					<Text>get Videos</Text>
+				</TouchableOpacity>
+				<TouchableOpacity
+					style={styles.btn}
+					onPress={this.logOut}
+				>
+					<Text>Log Out</Text>
 				</TouchableOpacity>
 			</View>
 		);
