@@ -88,9 +88,7 @@ export default class HomeScreen extends React.Component {
 					ref={this.handleVideoMount}
 					useNativeControls={true}
 					resizeMode="cover"
-					shouldPlay
-					isLooping
-					style={{ width: 300, height: 300 }}
+					style={{ width: 300, height: 200 }}
 				/>
 			</View>
 		);
