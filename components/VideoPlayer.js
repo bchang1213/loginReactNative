@@ -2,15 +2,14 @@ import React from 'react';
 import {
 	StyleSheet,
 	Text,
-    TouchableOpacity,
-    FlatList,
+	TouchableOpacity,
 	AsyncStorage,
 	View,
 } from 'react-native';
 import { Video } from 'expo-av';
 import { throwIfAudioIsDisabled } from 'expo-av/build/Audio/AudioAvailability';
 
-export default class HomeScreen extends React.Component {
+export default class VideoPlayer extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -69,7 +68,7 @@ export default class HomeScreen extends React.Component {
 		
 			if(res.success) {
                 //Make videos available to component for display render.
-                console.log("Type: " + JSON.stringify(res.success));
+                console.log("Type: " + typeof res.success + " , count: " + res.success.length);
                 this.setState({videos: res.success});
 			}
 
@@ -87,30 +86,34 @@ export default class HomeScreen extends React.Component {
 	render() {
 		return (
 			<View style={styles.container}>
-            { this.state.videos ?
-                <FlatList
-                data={this.state.videos}
-                renderItem={({item}) =>
-                    <Video
-                    source={ require('./small.mp4') }
-                    rate={1.0}
-                    volume={1.0}
-                    isMuted={false}
-                    ref={this.handleVideoMount}
-                    useNativeControls={true}
-                    resizeMode="cover"
-                    style={{ width: 300, height: 200 }}
-                    />}
-                />
-            : null }
+                {this.state.videos ?
+                    {for (var i = 0; i < this.state.videos.length; i++){
+                        <Video
+                        source={ require('./small.mp4') }
+                        rate={1.0}
+                        volume={1.0}
+                        isMuted={false}
+                        ref={this.handleVideoMount}
+                        useNativeControls={true}
+                        resizeMode="cover"
+                        style={{ width: 300, height: 200 }}
+                        />
+                    }
+                }
+                : null
+                }
+
+{ this.state.uploadedFileLocation !== null ?
+    <ul>
+    <p className='fileLabel'>File(s) Sent to S3:</p>
+    <img className='uploadedImage' src={this.state.uploadedFileLocation}/>
+    {this.state.file.map(f => <li className='fileName' key={f.name}>{f.name} <p className='fileSize'>{f.size} bytes</p></li>)}
+    </ul>
+: null }
 			</View>
 		);
 	}
 }
-
-HomeScreen.navigationOptions = {
-	header: null,
-};
 
 const styles = StyleSheet.create({
     wrapper : {
@@ -123,30 +126,5 @@ const styles = StyleSheet.create({
         backgroundColor: "#2896d3",
         paddingLeft: 40,
         paddingRight: 40
-    },
-    header : {
-        fontSize: 24,
-        marginBottom: 60,
-        color: "#fff",
-        fontWeight: "bold",
-    },
-    textInput: {
-        alignSelf: "stretch",
-        padding: 16,
-        marginBottom: 20,
-        backgroundColor: "#fff"
-    },
-    btn: {
-        alignSelf: "stretch",
-        padding: 20,
-        backgroundColor: "#01c853",
-        alignItems: "center"
-    },
-	backgroundVideo: {
-		position: 'absolute',
-		top: 0,
-		left: 0,
-		bottom: 0,
-		right: 0,
-	}
+    }
 });

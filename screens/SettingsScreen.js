@@ -78,6 +78,28 @@ export default class HomeScreen extends React.Component {
 		.done();
 	}
 
+	getOneVideo = () => {
+		fetch('http://10.0.2.2:3000/getOneVimeo', {
+			method: "GET",
+			headers: {
+				"Accept": "application/json",
+				"Content-Type": "application/json",
+			}
+		})
+		.then((response) => response.json())
+		.then((res) => {
+		
+			if(res.success) {
+				alert(JSON.stringify(res.success, null, 2));
+			}
+
+			else {
+				alert(res.error);
+			}
+		})
+		.done();
+	}
+
 	render() {
 		return (
 			<View style={styles.container} >
