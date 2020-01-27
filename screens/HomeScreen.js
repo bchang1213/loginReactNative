@@ -21,7 +21,8 @@ export default class HomeScreen extends React.Component {
 			user_team: '',
 			user_professor: '',
 			user_username: '',
-			user_role: 0
+            user_role: 0,
+            videos: null
 		};
 	}
 	//Called Once on client
