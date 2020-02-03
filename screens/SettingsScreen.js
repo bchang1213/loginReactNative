@@ -68,11 +68,11 @@ export default class HomeScreen extends React.Component {
 		.then((res) => {
 		
 			if(res.success) {
-				alert(JSON.stringify(res.success, null, 2));
+				alert("Success to getting all videos.");
 			}
 
 			else {
-				alert(res.error);
+				alert("Error occurred.");
 			}
 		})
 		.done();
@@ -90,7 +90,7 @@ export default class HomeScreen extends React.Component {
 		.then((res) => {
 		
 			if(res.success) {
-				alert(JSON.stringify(res.success, null, 2));
+				alert(res.success);
 			}
 
 			else {

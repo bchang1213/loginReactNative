@@ -91,9 +91,11 @@ export default class HomeScreen extends React.Component {
             { this.state.videos ?
                 <FlatList
                 data={this.state.videos}
+                keyExtractor={item => item.id}
                 renderItem={({item}) =>
                     <Video
-                    source={ require('./small.mp4') }
+                    id={item.id}
+                    source={{ uri : item.link }}
                     rate={1.0}
                     volume={1.0}
                     isMuted={false}
