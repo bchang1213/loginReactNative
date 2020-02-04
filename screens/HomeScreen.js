@@ -5,10 +5,10 @@ import {
     TouchableOpacity,
     FlatList,
 	AsyncStorage,
-	View,
+    View,
+    Image
 } from 'react-native';
 import { Video } from 'expo-av';
-import { throwIfAudioIsDisabled } from 'expo-av/build/Audio/AudioAvailability';
 
 export default class HomeScreen extends React.Component {
 	constructor(props) {
@@ -93,17 +93,21 @@ export default class HomeScreen extends React.Component {
                 data={this.state.videos}
                 keyExtractor={item => item.id}
                 renderItem={({item}) =>
-                    <Video
-                    id={item.id}
-                    source={{ uri : item.link }}
-                    rate={1.0}
-                    volume={1.0}
-                    isMuted={false}
-                    ref={this.handleVideoMount}
-                    useNativeControls={true}
-                    resizeMode="cover"
-                    style={{ width: 300, height: 200 }}
-                    />}
+                    <View style={styles.videoCard}>
+                        <Text style={styles.videoTitle}>{item.name}</Text>
+                        <Video
+                        id={item.id.toString()}
+                        source={{ uri : item.link }}
+                        rate={1.0}
+                        volume={1.0}
+                        isMuted={false}
+                        ref={this.handleVideoMount}
+                        useNativeControls={true}
+                        resizeMode="cover"
+                        style={{ width: 300, height: 200 }}
+                        />
+                    </View>
+                }
                 />
             : null }
 			</View>
@@ -116,40 +120,25 @@ HomeScreen.navigationOptions = {
 };
 
 const styles = StyleSheet.create({
+	container: {
+		flex: 1,
+		alignItems: "center",
+		backgroundColor: "#2896d3",
+		paddingLeft: 40,
+		paddingRight: 40
+    },
+    videoTitle : {
+        color: '#FFFFFF'
+    },
     wrapper : {
         flex: 1,
     },
-    container: {
+    videoCard: {
+        backgroundColor: "#121212",
         flex: 1,
-        alignItems: "center",
-        justifyContent: "center",
-        backgroundColor: "#2896d3",
-        paddingLeft: 40,
-        paddingRight: 40
-    },
-    header : {
-        fontSize: 24,
-        marginBottom: 60,
-        color: "#fff",
-        fontWeight: "bold",
-    },
-    textInput: {
-        alignSelf: "stretch",
-        padding: 16,
-        marginBottom: 20,
-        backgroundColor: "#fff"
-    },
-    btn: {
-        alignSelf: "stretch",
-        padding: 20,
-        backgroundColor: "#01c853",
-        alignItems: "center"
-    },
-	backgroundVideo: {
-		position: 'absolute',
-		top: 0,
-		left: 0,
-		bottom: 0,
-		right: 0,
-	}
+        padding: 10,
+        flexDirection: 'column',
+        justifyContent: 'space-around',
+        marginTop: 10
+    }
 });
