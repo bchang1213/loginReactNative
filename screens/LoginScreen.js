@@ -18,6 +18,7 @@ export default class LoginScreen extends React.Component {
 			email: '',
 			password: '',
 		};
+
 	}
 
 	componentDidMount () {

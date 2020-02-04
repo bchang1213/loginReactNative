@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import { Video } from 'expo-av';
 
-export default class HomeScreen extends React.Component {
+export default class VideoScreen extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -23,9 +23,7 @@ export default class HomeScreen extends React.Component {
 			user_username: '',
             user_role: 0,
             videos: null
-        };
-        
-        this.goToVideo = this.goToVideo.bind(this);
+		};
 	}
 	//Called Once on client
 	componentDidMount () {
@@ -81,11 +79,6 @@ export default class HomeScreen extends React.Component {
 			}
 		})
 		.done();
-    }
-    
-	goToVideo = (video_uri) => {
-        alert("got vid uri: " + video_uri);
-		this.props.navigation.navigate('Videos');
 	}
 
 	handleVideoMount = ref => {
@@ -101,10 +94,7 @@ export default class HomeScreen extends React.Component {
                 keyExtractor={item => item.id}
                 renderItem={({item}) =>
                     <View style={styles.videoCard}>
-                        <Text
-                        style={styles.videoTitle}
-                        onPress={() => this.goToVideo(item.uri)}
-                        >{item.name}</Text>
+                        <Text style={styles.videoTitle}>{item.name}</Text>
                         <Video
                         id={item.id.toString()}
                         source={{ uri : item.link }}
@@ -125,7 +115,7 @@ export default class HomeScreen extends React.Component {
 	}
 }
 
-HomeScreen.navigationOptions = {
+VideoScreen.navigationOptions = {
 	header: null,
 };
 

@@ -3,6 +3,8 @@ import { createAppContainer, createSwitchNavigator } from 'react-navigation';
 import MainTabNavigator from './MainTabNavigator';
 // Pre Login Navigator
 import LoginNavigator from './LoginNavigator';
+// Video Navigator
+import VideoNavigator from './VideoNavigator';
 //Loading Screen to Show After Authentication
 import AuthLoadingScreen from '../screens/AuthLoadingScreen';
 
@@ -12,6 +14,7 @@ export default createAppContainer(
   createSwitchNavigator({
       AuthLoading: AuthLoadingScreen,
       App: MainTabNavigator,
+      Videos: VideoNavigator,
       Auth: LoginNavigator,
     },
     {

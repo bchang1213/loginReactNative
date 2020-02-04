@@ -4,7 +4,7 @@ import { createStackNavigator } from 'react-navigation-stack';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
 
 import TabBarIcon from '../components/TabBarIcon';
-import HomeScreen from '../screens/HomeScreen';
+import VideoScreen from '../screens/VideoScreen';
 import LinksScreen from '../screens/LinksScreen';
 import SettingsScreen from '../screens/SettingsScreen';
 
@@ -13,15 +13,15 @@ const config = Platform.select({
   default: {},
 });
 
-const HomeStack = createStackNavigator(
+const VideoStack = createStackNavigator(
   {
-    Home: HomeScreen
+    Video: VideoScreen
   },
   config
 );
 
-HomeStack.navigationOptions = {
-  tabBarLabel: 'Home',
+VideoStack.navigationOptions = {
+  tabBarLabel: 'Video',
   tabBarIcon: ({ focused }) => (
     <TabBarIcon
       focused={focused}
@@ -34,7 +34,7 @@ HomeStack.navigationOptions = {
   ),
 };
 
-HomeStack.path = '';
+VideoStack.path = '';
 
 const LinksStack = createStackNavigator(
   {
@@ -69,7 +69,7 @@ SettingsStack.navigationOptions = {
 SettingsStack.path = '';
 
 const tabNavigator = createBottomTabNavigator({
-  HomeStack,
+  VideoStack,
   LinksStack,
   SettingsStack,
 });
