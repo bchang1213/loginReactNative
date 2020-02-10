@@ -9,6 +9,7 @@ import {
     Image
 } from 'react-native';
 import { Video } from 'expo-av';
+import { StackRouter } from 'react-navigation';
 
 export default class VideoScreen extends React.Component {
 	constructor(props) {
@@ -22,12 +23,12 @@ export default class VideoScreen extends React.Component {
 			user_professor: '',
 			user_username: '',
             user_role: 0,
-            videos: null
 		};
 	}
 	//Called Once on client
 	componentDidMount () {
-		this._loadInitialState().done();
+        this._loadInitialState().done();
+        alert(JSON.stringify(this.props, null , 4));
 		this.getVideos();
 	}
 	//componentWillMount is called twice: once on server,
@@ -58,28 +59,32 @@ export default class VideoScreen extends React.Component {
     }
 
 	getVideos = () => {
-		fetch('http://10.0.2.2:3000/getAllDBVideos', {
-			method: "GET",
-			headers: {
-				"Accept": "application/json",
-				"Content-Type": "application/json",
-			}
-		})
-		.then((response) => response.json())
-		.then((res) => {
+		// fetch('http://10.0.2.2:3000/getAllDBVideos', {
+		// 	method: "GET",
+		// 	headers: {
+		// 		"Accept": "application/json",
+		// 		"Content-Type": "application/json",
+		// 	}
+		// })
+		// .then((response) => response.json())
+		// .then((res) => {
 		
-			if(res.success) {
-                //Make videos available to component for display render.
-                console.log("Type: " + JSON.stringify(res.success));
-                this.setState({videos: res.success});
-			}
+		// 	if(res.success) {
+        //         //Make videos available to component for display render.
+        //         console.log("Type: " + JSON.stringify(res.success));
+        //         this.setState({videos: res.success});
+		// 	}
 
-			else {
-				alert("getVideos" + res.error);
-			}
-		})
-		.done();
-	}
+		// 	else {
+		// 		alert("getVideos" + res.error);
+		// 	}
+		// })
+		// .done();
+    }
+    
+    goBack = () => {
+        this.props.navigation.navigate('App');
+    }
 
 	handleVideoMount = ref => {
 		this.player = ref;
@@ -88,28 +93,12 @@ export default class VideoScreen extends React.Component {
 	render() {
 		return (
 			<View style={styles.container}>
-            { this.state.videos ?
-                <FlatList
-                data={this.state.videos}
-                keyExtractor={item => item.id}
-                renderItem={({item}) =>
-                    <View style={styles.videoCard}>
-                        <Text style={styles.videoTitle}>{item.name}</Text>
-                        <Video
-                        id={item.id.toString()}
-                        source={{ uri : item.link }}
-                        rate={1.0}
-                        volume={1.0}
-                        isMuted={false}
-                        ref={this.handleVideoMount}
-                        useNativeControls={true}
-                        resizeMode="cover"
-                        style={{ width: 300, height: 200 }}
-                        />
-                    </View>
-                }
-                />
-            : null }
+                <TouchableOpacity
+                    style={styles.btn}
+                    onPress={this.goBack}
+                >
+                    <Text>Current Video URI : {JSON.stringify( this.props.navigation.state.params) }</Text>
+                </TouchableOpacity>
 			</View>
 		);
 	}
@@ -140,5 +129,11 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
         justifyContent: 'space-around',
         marginTop: 10
-    }
+    },
+    btn: {
+		alignSelf: "stretch",
+		padding: 20,
+		backgroundColor: "#01c853",
+		alignItems: "center"
+	}
 });

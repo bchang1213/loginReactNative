@@ -85,7 +85,7 @@ export default class HomeScreen extends React.Component {
     
 	goToVideo = (video_uri) => {
         alert("got vid uri: " + video_uri);
-		this.props.navigation.navigate('Videos');
+		this.props.navigation.navigate('Videos', { video: video_uri });
 	}
 
 	handleVideoMount = ref => {
@@ -126,7 +126,7 @@ export default class HomeScreen extends React.Component {
 }
 
 HomeScreen.navigationOptions = {
-	header: null,
+    header: null,
 };
 
 const styles = StyleSheet.create({
