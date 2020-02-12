@@ -9,7 +9,6 @@ import {
     Image
 } from 'react-native';
 import { Video } from 'expo-av';
-import { StackRouter } from 'react-navigation';
 
 export default class VideoScreen extends React.Component {
 	constructor(props) {
@@ -22,13 +21,20 @@ export default class VideoScreen extends React.Component {
 			user_team: '',
 			user_professor: '',
 			user_username: '',
-            user_role: 0,
+			user_role: 0,
+			focusedVideo: null,
+			focusedURI: '',
+			vid_id: 0,
+			vid_name: '',
+			vid_uri: '',
+			vid_width: '',
+			vid_link: ''
 		};
 	}
 	//Called Once on client
 	componentDidMount () {
         this._loadInitialState().done();
-        alert(JSON.stringify(this.props, null , 4));
+        console.log(JSON.stringify(this.props, null , 4));
 		this.getVideos();
 	}
 	//componentWillMount is called twice: once on server,
@@ -37,8 +43,10 @@ export default class VideoScreen extends React.Component {
 	//data is displayed to browser.
     _loadInitialState = async () => {
         try {
-            var value = await AsyncStorage.getItem('user');
-            if (value !== null) {
+			var value = await AsyncStorage.getItem('user');
+			var focusedVideo = await AsyncStorage.getItem('focusedVideo');
+			var focusedURI= await AsyncStorage.getItem('focusedURI');
+            if (value !== null && focusedVideo !== null && focusedURI !== null) {
                 //This Controls switch navigator's state
                 var userJSON = JSON.parse(value);
                 this.setState({user_id: userJSON.id});
@@ -48,7 +56,16 @@ export default class VideoScreen extends React.Component {
                 this.setState({user_team: userJSON.user_team});
                 this.setState({user_professor: userJSON.professor});
                 this.setState({user_username: userJSON.username});
-                this.setState({user_role: userJSON.user_role});
+				this.setState({user_role: userJSON.user_role});
+				this.setState({focusedVideo: focusedVideo});
+				this.setState({focusedURI: focusedURI});
+
+				var focusedVideoJSON = JSON.parse(focusedVideo);
+				this.setState({ vid_id : focusedVideoJSON['id'] });
+				this.setState({ vid_name : focusedVideoJSON['name'] });
+
+				this.setState({ vid_width : focusedVideoJSON['width'] });
+				this.setState({ vid_link : focusedVideoJSON['link'].toString });
             }
         }
         catch (error) {
@@ -83,6 +100,7 @@ export default class VideoScreen extends React.Component {
     }
     
     goBack = () => {
+		AsyncStorage.removeItem('focusedVideo');
         this.props.navigation.navigate('App');
     }
 
@@ -97,8 +115,21 @@ export default class VideoScreen extends React.Component {
                     style={styles.btn}
                     onPress={this.goBack}
                 >
-                    <Text>Current Video URI : {JSON.stringify( this.props.navigation.state.params) }</Text>
+                    <Text>Go Back</Text>
                 </TouchableOpacity>
+
+				<Text>{JSON.stringify(this.state.focusedURI) }</Text>
+
+				<Text
+				style={styles.videoTitle}
+				>{ this.state.vid_name }</Text>
+				<Video
+				source={{ uri: this.state.vid_link }}
+				rate={1.0}
+				volume={1.0}
+				isMuted={false}
+				style={{ width: 300, height: 200 }}
+				/>
 			</View>
 		);
 	}
@@ -128,7 +159,8 @@ const styles = StyleSheet.create({
         padding: 10,
         flexDirection: 'column',
         justifyContent: 'space-around',
-        marginTop: 10
+		marginTop: 10,
+		height: 100
     },
     btn: {
 		alignSelf: "stretch",

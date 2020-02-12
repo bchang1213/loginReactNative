@@ -56,7 +56,6 @@ export default class HomeScreen extends React.Component {
             console.log(error);
         }
 
-
     }
 
 	getVideos = () => {
@@ -83,9 +82,11 @@ export default class HomeScreen extends React.Component {
 		.done();
     }
     
-	goToVideo = (video_uri) => {
-        alert("got vid uri: " + video_uri);
-		this.props.navigation.navigate('Videos', { video: video_uri });
+	goToVideo = (video_uri, item) => {
+        alert("got vid uri: " + item);
+        AsyncStorage.setItem('focusedURI', video_uri);
+        AsyncStorage.setItem('focusedVideo', JSON.stringify(item));
+		this.props.navigation.navigate('Videos');
 	}
 
 	handleVideoMount = ref => {
@@ -103,7 +104,7 @@ export default class HomeScreen extends React.Component {
                     <View style={styles.videoCard}>
                         <Text
                         style={styles.videoTitle}
-                        onPress={() => this.goToVideo(item.uri)}
+                        onPress={() => this.goToVideo(item.uri, item)}
                         >{item.name}</Text>
                         <Video
                         id={item.id.toString()}

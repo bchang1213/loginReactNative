@@ -63,7 +63,7 @@ export default class LoginScreen extends React.Component {
 		.then((response) => response.json())
 		.then((res) => {
 			if(res.success) {
-				this.storeData("user", JSON.stringify(res.success));
+				AsyncStorage.setItem("user", JSON.stringify(res.success));
 				//This controls the switch navigator's state
 				this.props.navigation.navigate('App');
 			}
