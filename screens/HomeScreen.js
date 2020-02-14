@@ -106,16 +106,9 @@ export default class HomeScreen extends React.Component {
                         style={styles.videoTitle}
                         onPress={() => this.goToVideo(item.uri, item)}
                         >{item.name}</Text>
-                        <Video
-                        id={item.id.toString()}
-                        source={{ uri : item.link }}
-                        rate={1.0}
-                        volume={1.0}
-                        isMuted={false}
-                        ref={this.handleVideoMount}
-                        useNativeControls={true}
-                        resizeMode="cover"
-                        style={{ width: 300, height: 200 }}
+                        <Image
+                            style={{width: 300, height: 300}}
+                            source={{uri: item.size640.link}}
                         />
                     </View>
                 }

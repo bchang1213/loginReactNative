@@ -3,10 +3,8 @@ import {
 	StyleSheet,
 	Text,
     TouchableOpacity,
-    FlatList,
 	AsyncStorage,
     View,
-    Image
 } from 'react-native';
 import { Video } from 'expo-av';
 
@@ -24,11 +22,8 @@ export default class VideoScreen extends React.Component {
 			user_role: 0,
 			focusedVideo: null,
 			focusedURI: '',
-			vid_id: 0,
-			vid_name: '',
-			vid_uri: '',
-			vid_width: '',
-			vid_link: ''
+			videoURI: '',
+			videoID: ''
 		};
 	}
 	//Called Once on client
@@ -61,11 +56,9 @@ export default class VideoScreen extends React.Component {
 				this.setState({focusedURI: focusedURI});
 
 				var focusedVideoJSON = JSON.parse(focusedVideo);
-				this.setState({ vid_id : focusedVideoJSON['id'] });
-				this.setState({ vid_name : focusedVideoJSON['name'] });
-
-				this.setState({ vid_width : focusedVideoJSON['width'] });
-				this.setState({ vid_link : focusedVideoJSON['link'].toString });
+				console.log("Video: " + JSON.stringify(focusedVideoJSON, null, 4));
+				this.setState({ videoID : focusedVideoJSON.id });
+				this.setState({ videoURI : focusedVideoJSON.link });
             }
         }
         catch (error) {
@@ -119,15 +112,20 @@ export default class VideoScreen extends React.Component {
                 </TouchableOpacity>
 
 				<Text>{JSON.stringify(this.state.focusedURI) }</Text>
-
 				<Text
 				style={styles.videoTitle}
-				>{ this.state.vid_name }</Text>
+				>
+					{ this.state.videoURI }
+				</Text>
 				<Video
-				source={{ uri: this.state.vid_link }}
+				id={this.state.videoID}
+				source={{ uri : this.state.videoURI }}
 				rate={1.0}
 				volume={1.0}
 				isMuted={false}
+				ref={this.handleVideoMount}
+				useNativeControls={true}
+				resizeMode="cover"
 				style={{ width: 300, height: 200 }}
 				/>
 			</View>
