@@ -7,10 +7,8 @@ import {
 	AsyncStorage,
     View,
 } from 'react-native';
-import Comments from '../components/Comments';
-import { Video } from 'expo-av';
 
-export default class VideoScreen extends React.Component {
+export default class Comments extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -30,7 +28,6 @@ export default class VideoScreen extends React.Component {
 	//Called Once on client
 	componentDidMount () {
         this._loadInitialState().done();
-		this.getVideos();
 	}
 	//componentWillMount is called twice: once on server,
 	//and once on client. It is called after initial render
@@ -86,77 +83,28 @@ export default class VideoScreen extends React.Component {
 
     }
 
-	getVideos = () => {
-		// fetch('http://10.0.2.2:3000/getAllDBVideos', {
-		// 	method: "GET",
-		// 	headers: {
-		// 		"Accept": "application/json",
-		// 		"Content-Type": "application/json",
-		// 	}
-		// })
-		// .then((response) => response.json())
-		// .then((res) => {
-		
-		// 	if(res.success) {
-        //         //Make videos available to component for display render.
-        //         console.log("Type: " + JSON.stringify(res.success));
-        //         this.setState({videos: res.success});
-		// 	}
-
-		// 	else {
-		// 		alert("getVideos" + res.error);
-		// 	}
-		// })
-		// .done();
-    }
-    
-    goBack = () => {
-		AsyncStorage.removeItem('focusedVideo');
-        this.props.navigation.navigate('App');
-    }
-
-	handleVideoMount = ref => {
-		this.player = ref;
-	};
-
 	render() {
 		return (
 			<View style={styles.container}>
-                <TouchableOpacity
-                    style={styles.btn}
-                    onPress={this.goBack}
-                >
-                    <Text>Go Back</Text>
-                </TouchableOpacity>
-				{this.state.videoTitle ?
-				<Text
-				style={styles.videoTitle}
-				>
-					{ this.state.videoTitle}
-				</Text>
-				: null }
-				{this.state.videoID && this.state.videoURI ?
-				<Video
-				id={this.state.videoID}
-				source={{ uri : this.state.videoURI }}
-				rate={1.0}
-				volume={1.0}
-				isMuted={false}
-				ref={this.handleVideoMount}
-				useNativeControls={true}
-				resizeMode="cover"
-				style={{ width: 300, height: 200 }}
-				/>
-				: null}
-				<Comments />
+				<View>
+					<Text>Comments</Text>
+				</View>
+				<View>
+					<TextInput style={styles.textInput} placeholder="Comment as {this.state.user_firstName}"
+							onChangeText={ (text)=> this.setState({comment : text})}
+							underlineColorAndroid='transparent'
+					/>
+					<TouchableOpacity
+						style={styles.btn}
+						onPress={this.submitComment}
+					>
+					<Text>Post</Text>
+					</TouchableOpacity>
+				</View>
 			</View>
 		);
 	}
 }
-
-VideoScreen.navigationOptions = {
-	header: null,
-};
 
 const styles = StyleSheet.create({
 	container: {

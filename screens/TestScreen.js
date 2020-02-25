@@ -71,6 +71,7 @@ export default class HomeScreen extends React.Component {
 		
 			if(res.success) {
                 //Make videos available to component for display render.
+                console.log("Type: " + JSON.stringify(res.success));
                 this.setState({videos: res.success});
 			}
 
@@ -81,7 +82,9 @@ export default class HomeScreen extends React.Component {
 		.done();
     }
     
-	goToVideo = (item) => {
+	goToVideo = (video_uri, item) => {
+        alert("got vid uri: " + item);
+        AsyncStorage.setItem('focusedURI', video_uri);
         AsyncStorage.setItem('focusedVideo', JSON.stringify(item));
 		this.props.navigation.navigate('Videos');
 	}
@@ -101,7 +104,7 @@ export default class HomeScreen extends React.Component {
                     <View style={styles.videoCard}>
                         <Text
                         style={styles.videoTitle}
-                        onPress={() => this.goToVideo(item)}
+                        onPress={() => this.goToVideo(item.uri, item)}
                         >{item.name}</Text>
                         <Video
                         id={item.id.toString()}
