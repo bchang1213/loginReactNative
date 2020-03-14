@@ -8,7 +8,7 @@ import {
     View,
 } from 'react-native';
 import Comments from '../components/Comments';
-import { Video } from 'expo-av';
+import { Video, Audio } from 'expo-av';
 
 export default class VideoScreen extends React.Component {
 	constructor(props) {
@@ -26,16 +26,34 @@ export default class VideoScreen extends React.Component {
 			videoURI: '',
 			videoTitle: ''
 		};
+
+		this.playbackInstance = null;
 	}
 	//Called Once on client
-	componentDidMount () {
-        this._loadInitialState().done();
-		this.getVideos();
-	}
 	//componentWillMount is called twice: once on server,
 	//and once on client. It is called after initial render
 	//when client receives data from server and before the 
 	//data is displayed to browser.
+	componentDidMount () {
+        this._loadInitialState().done();
+		this.getVideos();
+
+		Audio.setAudioModeAsync({
+			allowsRecordingIOS: false,
+			interruptionModeIOS: Audio.INTERRUPTION_MODE_IOS_DO_NOT_MIX,
+			playsInSilentModeIOS: true,
+			shouldDuckAndroid: true,
+			interruptionModeAndroid:          Audio.INTERRUPTION_MODE_ANDROID_DO_NOT_MIX,
+			playThroughEarpieceAndroid: false,
+		});
+	 	//  This function will be called
+		this._loadNewPlaybackInstance(true);
+	}
+	componentWillUnmount() {
+		this.playbackInstance.unloadAsync();
+	//  Check Your Console To verify that the above line is working
+		console.log('unmount');
+	}
 	/* Example focusedVideo JSON
 	{
 		"id":894,
@@ -78,13 +96,45 @@ export default class VideoScreen extends React.Component {
 				this.setState({videoTitle: focusedVideoJSON.name});
 
 			}
+			
         }
         catch (error) {
             console.log(error);
         }
 
 
-    }
+	}
+	
+	async _loadNewPlaybackInstance(playing) {
+		if (this.playbackInstance != null) {
+			await this.playbackInstance.unloadAsync();
+			this.playbackInstance.setOnPlaybackStatusUpdate(null);
+			this.playbackInstance = null;
+		 }
+		 const source = JSON.stringify(this.state.videoURI);
+		 const initialStatus = {
+	//        Play by default
+			  shouldPlay: true,
+	//        Control the speed
+			  rate: 1.0,
+	//        Correct the pitch
+			  shouldCorrectPitch: true,
+	//        Control the Volume
+			  volume: 1.0,
+	//        mute the Audio
+			  isMuted: false
+		 };
+		 const { sound, status } = await Audio.Sound.createAsync(
+			 {uri: source},
+			 {shouldPlay: initialStatus}
+		);
+	//  Save the response of sound in playbackInstance
+		this.playbackInstance = sound;
+	//  Make the loop of Audio
+		this.playbackInstance.setIsLoopingAsync(true);
+	//  Play the Music
+		this.playbackInstance.playAsync();
+	}
 
 	getVideos = () => {
 		// fetch('http://10.0.2.2:3000/getAllDBVideos', {

@@ -79,9 +79,38 @@ export default class Comments extends React.Component {
         catch (error) {
             console.log(error);
         }
+	}
+	
+	submitComment = () => {
+		console.log("VIDEO ID: ", this.state.videoID)
+		var comment = this.state.comment;
+		var video_id = this.state.videoID;
+		var user_id = this.state.user_id;
 
+		fetch('http://10.0.2.2:3000/saveComment', {
+			method: "POST",
+			headers: {
+				"Accept": "application/json",
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({
+				comment: this.state.comment,
+				video_id: this.state.videoID,
+				user_id: this.state.user_id
+			})
+		})
+		.then((response) => response.json())
+		.then((res) => {
+			if(res.success) {
 
-    }
+			}
+
+			else {
+				alert(res.error);
+			}
+		})
+		.done();
+	}
 
 	render() {
 		return (
@@ -90,7 +119,7 @@ export default class Comments extends React.Component {
 					<Text>Comments</Text>
 				</View>
 				<View>
-					<TextInput style={styles.textInput} placeholder="Comment as {this.state.user_firstName}"
+					<TextInput style={styles.textInput} placeholder="Leave a comment."
 							onChangeText={ (text)=> this.setState({comment : text})}
 							underlineColorAndroid='transparent'
 					/>
