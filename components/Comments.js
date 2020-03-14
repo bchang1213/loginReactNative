@@ -82,31 +82,35 @@ export default class Comments extends React.Component {
 	}
 	
 	submitComment = () => {
-		console.log("VIDEO ID: ", this.state.videoID)
-		var comment = this.state.comment;
-		var video_id = this.state.videoID;
-		var user_id = this.state.user_id;
 
+		console.log(this.state.comment)
+		console.log(this.state.videoID)
+		console.log(this.state.user_id)
 		fetch('http://10.0.2.2:3000/saveComment', {
 			method: "POST",
 			headers: {
 				"Accept": "application/json",
-				"Content-Type": "application/json",
+				"Content-Type": "application/json"
 			},
 			body: JSON.stringify({
 				comment: this.state.comment,
 				video_id: this.state.videoID,
-				user_id: this.state.user_id
+				user_id: this.state.user_id,
+				reply_id: null
 			})
 		})
 		.then((response) => response.json())
 		.then((res) => {
-			if(res.success) {
+			var responseFromDatabase = JSON.parse(res);
 
+			if(responseFromDatabase) {
+				console.log("success:", responseFromDatabase)
+				var id_of_new_comment = responseFromDatabase.id;
 			}
 
 			else {
-				alert(res.error);
+				console.log("res.error", res)
+				alert(res);
 			}
 		})
 		.done();
