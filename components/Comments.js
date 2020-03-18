@@ -3,7 +3,8 @@ import {
 	StyleSheet,
 	Text,
 	TextInput,
-    TouchableOpacity,
+	TouchableOpacity,
+	FlatList,
 	AsyncStorage,
     View,
 } from 'react-native';
@@ -22,32 +23,14 @@ export default class Comments extends React.Component {
 			user_role: 0,
 			videoID: null,
 			videoURI: '',
-			videoTitle: ''
+			videoTitle: '',
+			comments: null
 		};
 	}
 	//Called Once on client
 	componentDidMount () {
-        this._loadInitialState().done();
+		this._loadInitialState().done();
 	}
-	//componentWillMount is called twice: once on server,
-	//and once on client. It is called after initial render
-	//when client receives data from server and before the 
-	//data is displayed to browser.
-	/* Example focusedVideo JSON
-	{
-		"id":894,
-		"name":"side control to Kimura technique",
-		"uri":"/videos/291624955",
-		"size640":{
-		   "link":"https://i.vimeocdn.com/video/732859021_640x360.jpg?r=pad",
-		   "width":640,
-		   "height":360,
-		   "link_with_play_button":"https://i.vimeocdn.com/filter/overlay?src0=https%3A%2F%2Fi.vimeocdn.com%2Fvideo%2F732859021_640x360.jpg&src1=http%3A%2F%2Ff.vimeocdn.com%2Fp%2Fimages%2Fcrawler_play.png"
-		},
-		"width":1280,
-		"link":"https://player.vimeo.com/external/291624955.hd.mp4?s=54fff849faa4e6274661fcf8513d8af7a2bc0439&profile_id=174&oauth2_token_id=1285094569"
-	 }
-	 */
     _loadInitialState = async () => {
         try {
 			var value = await AsyncStorage.getItem('user');
@@ -73,6 +56,8 @@ export default class Comments extends React.Component {
 				this.setState({videoURI: focusedVideoJSON.link});
 
 				this.setState({videoTitle: focusedVideoJSON.name});
+				/*getComments requires videoID, so make sure videoID state is set before running */
+				this.getComments();
 
 			}
         }
@@ -81,16 +66,53 @@ export default class Comments extends React.Component {
         }
 	}
 	
-	submitComment = () => {
-
-		console.log(this.state.comment)
-		console.log(this.state.videoID)
-		console.log(this.state.user_id)
-		fetch('http://10.0.2.2:3000/saveComment', {
-			method: "POST",
+	getComments = () => {
+		console.log('this.state.videoID', this.state.videoID)
+		fetch('http://10.0.2.2:3000/getAllCommentsForVideoID', {
+			method: 'POST',
 			headers: {
-				"Accept": "application/json",
-				"Content-Type": "application/json"
+				'Accept': 'application/json',
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({
+				video_id: this.state.videoID,
+			})
+		})
+		.then((response) => response.json())
+		.then((res) => {
+
+			if(res.payload) {
+				/*this.state is an array of objects
+				[
+					{
+						'comment': 'fsdfadsf',
+						'created_at': '2020-03-14T19:18:15.741Z',
+						'id': 23,
+						'modified_at': '2020-03-14T19:18:15.741Z',
+						'reply_id': null,
+						'user_id': 1,
+						'video_id': 894
+					},
+					{}
+				]
+				*/
+				this.setState({'comments' : res.payload});
+				console.log('got res payload: ', this.state.comments);
+			}
+
+			else {
+				alert('getVideos' + res.error);
+			}
+		})
+		.done();
+	}
+	
+	submitComment = () => {
+		fetch('http://10.0.2.2:3000/saveComment', {
+			method: 'POST',
+			headers: {
+				'Accept': 'application/json',
+				'Content-Type': 'application/json'
 			},
 			body: JSON.stringify({
 				comment: this.state.comment,
@@ -101,15 +123,13 @@ export default class Comments extends React.Component {
 		})
 		.then((response) => response.json())
 		.then((res) => {
-			var responseFromDatabase = JSON.parse(res);
-
-			if(responseFromDatabase) {
-				console.log("success:", responseFromDatabase)
-				var id_of_new_comment = responseFromDatabase.id;
+			if(res.success) {
+				console.log('success:', res.sucess)
+				this.getComments();
 			}
 
 			else {
-				console.log("res.error", res)
+				console.log('res.error', res)
 				alert(res);
 			}
 		})
@@ -122,8 +142,22 @@ export default class Comments extends React.Component {
 				<View>
 					<Text>Comments</Text>
 				</View>
-				<View>
-					<TextInput style={styles.textInput} placeholder="Leave a comment."
+				{ this.state.comments ?
+                <FlatList
+				data={this.state.comments}
+				style={styles.commentsList}
+                keyExtractor={item => item.id}
+                renderItem={({item}) =>
+                    <View style={styles.commentCard}>
+                        <Text
+                        style={styles.comment}
+                        >{item.comment}</Text>
+                    </View>
+                }
+                />
+            	: null }
+				<View style={styles.commentInputArea}>
+					<TextInput style={styles.textInput} placeholder='Leave a comment.'
 							onChangeText={ (text)=> this.setState({comment : text})}
 							underlineColorAndroid='transparent'
 					/>
@@ -141,37 +175,34 @@ export default class Comments extends React.Component {
 
 const styles = StyleSheet.create({
 	container: {
-		flex: 1,
-		alignItems: "center",
-		backgroundColor: "#2896d3",
+		display: 'grid',
+		flexDirection: 'column',
+		flexWrap: 'wrap',
+		backgroundColor: '#2896d3',
 		paddingLeft: 40,
 		paddingRight: 40
     },
-    videoTitle : {
-        color: '#FFFFFF'
-    },
-    wrapper : {
-        flex: 1,
-    },
-    videoCard: {
-        backgroundColor: "#121212",
-        flex: 1,
-        padding: 10,
-        flexDirection: 'column',
-        justifyContent: 'space-around',
-		marginTop: 10,
-		height: 100
-	},
 	textInput: {
-		alignSelf: "stretch",
+		alignSelf: 'stretch',
 		padding: 16,
 		marginBottom: 20,
-		backgroundColor: "#fff"
+		backgroundColor: '#fff'
 	},
     btn: {
-		alignSelf: "stretch",
+		alignSelf: 'stretch',
 		padding: 20,
-		backgroundColor: "#01c853",
-		alignItems: "center"
+		backgroundColor: '#01c853',
+		alignItems: 'center'
+	},
+	comment: {
+		color:'#000000'
+	},
+	commentCard : {
+		backgroundColor: '#808080',
+	},
+	commentsList : {
+		marginBottom: 10
+	},
+	commentInputArea : {
 	}
 });

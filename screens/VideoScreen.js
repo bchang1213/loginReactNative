@@ -50,7 +50,7 @@ export default class VideoScreen extends React.Component {
 		this._loadNewPlaybackInstance(true);
 	}
 	componentWillUnmount() {
-		this.playbackInstance.unloadAsync();
+		// this.playbackInstance.unloadAsync();
 	//  Check Your Console To verify that the above line is working
 		console.log('unmount');
 	}
