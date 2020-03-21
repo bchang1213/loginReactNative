@@ -8,9 +8,8 @@ import {
 	Text,
     View,
 } from 'react-native';
-import CommentsDisplay from '../components/CommentsDisplay';
 
-export default class Comments extends React.Component {
+export default class CommentsDisplay extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -80,7 +79,7 @@ export default class Comments extends React.Component {
 		})
 		.then((response) => response.json())
 		.then((res) => {
-			console.log("Ran get comments")
+
 			if(res.payload) {
 				/*this.state is an array of objects
 				[
@@ -103,52 +102,21 @@ export default class Comments extends React.Component {
 			console.log("Error getting comments:", err);
 		});
 	}
-	
-	submitComment = () => {
-		fetch('http://10.0.2.2:3000/saveComment', {
-			method: 'POST',
-			headers: {
-				'Accept': 'application/json',
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify({
-				comment: this.state.comment,
-				video_id: this.state.videoID,
-				user_id: this.state.user_id,
-				reply_id: null
-			})
-		})
-		.then((response) => response.json())
-		.then((res) => {
-			console.log("got response from submitcomment")
-			if(res.success) {
-				console.log("got success")
-				this.getComments();
-			}
-		})
-		.done();
-	}
 
 	render() {
 		return (
 			<View style="container">
-				<View>
-					<Text>Comments</Text>
-				</View>
-				<CommentsDisplay />
-				<View style="formArea">
-					<TextInput style={styles.textInput} placeholder='Leave a comment.'
-							onChangeText={ (text)=> this.setState({comment : text})}
-							underlineColorAndroid='transparent'
-					/>
-					<TouchableOpacity
-						style={styles.btn}
-						onPress={this.submitComment}
-					>
-						<Text>Post</Text>
-					</TouchableOpacity>
-				</View>
-			</View>
+				{ this.state.comments ?
+					this.state.comments.map((comment) =>
+					<View style={styles.commentCard}>
+						<Text
+						style={styles.comment}
+						>{comment.comment}</Text>
+					</View>
+				)
+            	:
+				<Text>No comments.</Text>}
+            </View>
 		);
 	}
 }
@@ -157,7 +125,6 @@ const styles = StyleSheet.create({
 	container: {
 		display: 'flex',
 		flexDirection: 'column',
-		flexWrap: 'wrap',
 		flexBasis: 'auto',
 		backgroundColor: '#2896d3',
 		paddingLeft: 40,
@@ -188,7 +155,7 @@ const styles = StyleSheet.create({
 	},
 	commentsList : {
 		backgroundColor: "red",
-		height: 150,
+		height: 10,
 		display: 'flex',
 		flexBasis: 'auto'
 	},

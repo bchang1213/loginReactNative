@@ -133,7 +133,7 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 		backgroundColor: "#2896d3",
 		paddingLeft: 40,
-		paddingRight: 40
+        paddingRight: 40
     },
     videoTitle : {
         color: '#FFFFFF'
