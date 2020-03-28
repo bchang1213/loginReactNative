@@ -8,7 +8,6 @@ import {
 	Text,
     View,
 } from 'react-native';
-import CommentsDisplay from '../components/CommentsDisplay';
 
 export default class Comments extends React.Component {
 	constructor(props) {
@@ -25,8 +24,12 @@ export default class Comments extends React.Component {
 			videoID: null,
 			videoURI: '',
 			videoTitle: '',
-			comments: null
+			comments: null,
+			comment: '',
+			commentPlaceHolder: "Leave a comment"
 		};
+
+		this.submitComment = this.submitComment.bind(this);
 	}
 	//Called Once on client
 	componentDidMount () {
@@ -80,7 +83,7 @@ export default class Comments extends React.Component {
 		})
 		.then((response) => response.json())
 		.then((res) => {
-			console.log("Ran get comments")
+
 			if(res.payload) {
 				/*this.state is an array of objects
 				[
@@ -122,11 +125,73 @@ export default class Comments extends React.Component {
 		.then((res) => {
 			console.log("got response from submitcomment")
 			if(res.success) {
-				console.log("got success")
-				this.getComments();
+				console.log("got success", JSON.stringify(res.success));
+				this.state.comments.push(res.success)
+				this.setState({
+					comments: this.state.comments
+				})
+				this.textInput.clear();
 			}
 		})
 		.done();
+	}
+
+	startComment = (text) => {
+		this.setState({comment : text})
+	}
+
+	formatReadableDate = (date, detail, zoneOffset) => {
+	    if (typeof detail === 'undefined') {
+			detail = false;
+		}
+	
+		if (typeof zoneOffset === 'undefined') {
+			zoneOffset = 0;
+		}
+	
+		zoneOffset = parseInt(zoneOffset) || 0;
+	
+		try {
+	
+			if (zoneOffset) {
+				date = new Date(date.getTime() + zoneOffset * 60 * 60 * 1000);
+			}
+	
+			var day = date.getDate();
+			var month = date.getMonth() + 1;
+			var year = date.getFullYear();
+	
+			var formatted = (month < 10 ? '0' + month : month) + '/' + (day < 10 ? '0' + day : day) + '/' + year;
+	
+			if (detail) {
+	
+				var hours = date.getHours(),
+					minutes = date.getMinutes(),
+					mid = 'PM';
+	
+				if (hours < 12) {
+					mid = 'AM';
+				}
+	
+				hours = hours % 12;
+				hours = hours ? hours : 12;
+	
+				if (hours < 10) {
+					hours = '0' + hours;
+				}
+	
+				if (minutes < 10) {
+					minutes = '0' + minutes;
+				}
+	
+				formatted += ' at ' + hours + ':' + minutes + ' ' + mid;
+				formatted
+			}
+	
+			return formatted;
+		} catch (e) {
+			return "";
+		}
 	}
 
 	render() {
@@ -135,11 +200,27 @@ export default class Comments extends React.Component {
 				<View>
 					<Text>Comments</Text>
 				</View>
-				<CommentsDisplay />
+				<View>
+					{ this.state.comments ?
+						this.state.comments.map((comment) =>
+						<View style={styles.commentCard}>
+							<View style={styles.userInfoBox}>
+								<Text style={styles.userInfo} >{this.state.user_username} </Text>
+								<Text style={styles.commentDate} >{comment.created_at}</Text>
+							</View>
+							<Text
+							style={styles.comment}
+							>{comment.comment}</Text>
+						</View>
+					)
+					:
+					<Text>No comments.</Text>}
+				</View>
 				<View style="formArea">
-					<TextInput style={styles.textInput} placeholder='Leave a comment.'
-							onChangeText={ (text)=> this.setState({comment : text})}
-							underlineColorAndroid='transparent'
+					<TextInput style={styles.textInput} placeholder={this.state.commentPlaceHolder}
+						ref={input => { this.textInput = input }}
+						onChangeText={ (text)=> this.startComment(text)}
+						underlineColorAndroid='transparent'
 					/>
 					<TouchableOpacity
 						style={styles.btn}
@@ -167,8 +248,17 @@ const styles = StyleSheet.create({
 		borderWidth: 2,
 		alignItems: 'center'
 
-    },
+	},
+	userInfoBox: {
+		backgroundColor: '#808080'
+	},
+	userInfo : {
+		color: 'black',
+		fontWeight: 'bold'
+	}
+	,
 	textInput: {
+		color: '#808080',
 		alignSelf: 'stretch',
 		padding: 16,
 		marginBottom: 20,
@@ -185,6 +275,9 @@ const styles = StyleSheet.create({
 	},
 	commentCard : {
 		backgroundColor: '#808080',
+		display: 'flex',
+		flexDirection:'row',
+		flexWrap:'wrap'
 	},
 	commentsList : {
 		backgroundColor: "red",

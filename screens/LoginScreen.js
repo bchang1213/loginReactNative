@@ -69,7 +69,7 @@ export default class LoginScreen extends React.Component {
 			}
 
 			else {
-				alert(res.error);
+				alert("The provided login information was not valid.");
 			}
 		})
 		.done();
@@ -118,7 +118,7 @@ const styles = StyleSheet.create({
 		flex: 1,
 		alignItems: "center",
 		justifyContent: "center",
-		backgroundColor: "#2896d3",
+		backgroundColor: "#3b3e40",
 		paddingLeft: 40,
 		paddingRight: 40
 	},
