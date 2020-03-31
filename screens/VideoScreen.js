@@ -3,6 +3,7 @@ import {
 	StyleSheet,
 	Text,
 	TextInput,
+	SafeAreaView,
     TouchableOpacity,
 	AsyncStorage,
     View,
@@ -171,7 +172,7 @@ export default class VideoScreen extends React.Component {
 
 	render() {
 		return (
-			<View style={styles.container}>
+			<SafeAreaView style={styles.container}>
                 <TouchableOpacity
                     style={styles.btn}
                     onPress={this.goBack}
@@ -199,7 +200,7 @@ export default class VideoScreen extends React.Component {
 				/>
 				: null}
 				<Comments />
-			</View>
+			</SafeAreaView>
 		);
 	}
 }

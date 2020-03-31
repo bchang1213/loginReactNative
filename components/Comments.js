@@ -4,10 +4,13 @@ import {
 	TextInput,
 	TouchableOpacity,
 	FlatList,
+	SafeAreaView,
+	ScrollView,
 	AsyncStorage,
 	Text,
     View,
 } from 'react-native';
+import { List, ListItem } from "react-native-elements";
 
 export default class Comments extends React.Component {
 	constructor(props) {
@@ -140,96 +143,78 @@ export default class Comments extends React.Component {
 		this.setState({comment : text})
 	}
 
-	formatReadableDate = (date, detail, zoneOffset) => {
-	    if (typeof detail === 'undefined') {
-			detail = false;
-		}
-	
-		if (typeof zoneOffset === 'undefined') {
-			zoneOffset = 0;
-		}
-	
-		zoneOffset = parseInt(zoneOffset) || 0;
-	
-		try {
-	
-			if (zoneOffset) {
-				date = new Date(date.getTime() + zoneOffset * 60 * 60 * 1000);
-			}
-	
-			var day = date.getDate();
-			var month = date.getMonth() + 1;
-			var year = date.getFullYear();
-	
-			var formatted = (month < 10 ? '0' + month : month) + '/' + (day < 10 ? '0' + day : day) + '/' + year;
-	
-			if (detail) {
-	
-				var hours = date.getHours(),
-					minutes = date.getMinutes(),
-					mid = 'PM';
-	
-				if (hours < 12) {
-					mid = 'AM';
-				}
-	
-				hours = hours % 12;
-				hours = hours ? hours : 12;
-	
-				if (hours < 10) {
-					hours = '0' + hours;
-				}
-	
-				if (minutes < 10) {
-					minutes = '0' + minutes;
-				}
-	
-				formatted += ' at ' + hours + ':' + minutes + ' ' + mid;
-				formatted
-			}
-	
-			return formatted;
-		} catch (e) {
-			return "";
+	renderIfNoComments = (commentsArray) => {
+		if (!commentsArray) {
+			return (
+				<Text>There are no comments.</Text>
+			)
 		}
 	}
 
+
 	render() {
+		const CommentArea = (this.state.comments) ? 
+			<FlatList data={this.state.comments}
+				renderItem={({item}) => 
+					<Text style={styles.comment} >{item.comment}</Text>
+				}
+				keyExtractor = {item => item.id}
+			/> : null;
 		return (
-			<View style="container">
+			<SafeAreaView style="container">
 				<View>
 					<Text>Comments</Text>
 				</View>
-				<View>
-					{ this.state.comments ?
-						this.state.comments.map((comment) =>
-						<View style={styles.commentCard}>
-							<View style={styles.userInfoBox}>
-								<Text style={styles.userInfo} >{this.state.user_username} </Text>
-								<Text style={styles.commentDate} >{comment.created_at}</Text>
+				<View style="commentsArea">
+					{this.state.comments ?
+						<View>
+							<FlatList
+								data={this.state.comments}
+								renderItem={({item}) =>
+								<View>
+									<View style={styles.userInfoBox}>
+										<Text style={styles.userInfo} >{item.username} </Text>
+									</View>
+									<Text style={styles.comment} >{item.comment}</Text>
+								</View>
+								}
+								keyExtractor = {item => item.id}
+							/>
+							<View style="formArea">
+								<TextInput style={styles.textInput} placeholder={this.state.commentPlaceHolder}
+									ref={input => { this.textInput = input }}
+									onChangeText={ (text)=> this.startComment(text)}
+									underlineColorAndroid='transparent'
+								/>
+								<TouchableOpacity
+									style={styles.btn}
+									onPress={this.submitComment}
+								>
+									<Text>Post</Text>
+								</TouchableOpacity>
 							</View>
-							<Text
-							style={styles.comment}
-							>{comment.comment}</Text>
 						</View>
-					)
 					:
-					<Text>No comments.</Text>}
+						<View>
+							<Text>There are no comments</Text>
+							<View style="formArea">
+								<TextInput style={styles.textInput} placeholder={this.state.commentPlaceHolder}
+									ref={input => { this.textInput = input }}
+									onChangeText={ (text)=> this.startComment(text)}
+									underlineColorAndroid='transparent'
+								/>
+								<TouchableOpacity
+									style={styles.btn}
+									onPress={this.submitComment}
+								>
+									<Text>Post</Text>
+								</TouchableOpacity>
+							</View>
+						</View>
+					}
 				</View>
-				<View style="formArea">
-					<TextInput style={styles.textInput} placeholder={this.state.commentPlaceHolder}
-						ref={input => { this.textInput = input }}
-						onChangeText={ (text)=> this.startComment(text)}
-						underlineColorAndroid='transparent'
-					/>
-					<TouchableOpacity
-						style={styles.btn}
-						onPress={this.submitComment}
-					>
-						<Text>Post</Text>
-					</TouchableOpacity>
-				</View>
-			</View>
+
+			</SafeAreaView>
 		);
 	}
 }
@@ -237,6 +222,7 @@ export default class Comments extends React.Component {
 const styles = StyleSheet.create({
 	container: {
 		display: 'flex',
+		flex: 1,
 		flexDirection: 'column',
 		flexWrap: 'wrap',
 		flexBasis: 'auto',
@@ -284,6 +270,9 @@ const styles = StyleSheet.create({
 		height: 150,
 		display: 'flex',
 		flexBasis: 'auto'
+	},
+	commentsArea: {
+
 	},
 	formArea : {
 		backgroundColor: 'black'
