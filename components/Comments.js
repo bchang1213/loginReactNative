@@ -50,7 +50,8 @@ export default class Comments extends React.Component {
                 this.setState({user_firstName: userJSON.first_name});
                 this.setState({user_lastName: userJSON.last_name});
                 this.setState({user_team: userJSON.user_team});
-                this.setState({user_professor: userJSON.professor});
+				this.setState({user_professor: userJSON.professor});
+				console.log("User name deteced: ", userJSON.username);
                 this.setState({user_username: userJSON.username});
 				this.setState({user_role: userJSON.user_role});
 			}
@@ -97,7 +98,8 @@ export default class Comments extends React.Component {
 						'modified_at': '2020-03-14T19:18:15.741Z',
 						'reply_id': null,
 						'user_id': 1,
-						'video_id': 894
+						'video_id': 894,
+						username: 'izanami'
 					},
 					{}
 				]
@@ -119,6 +121,7 @@ export default class Comments extends React.Component {
 			},
 			body: JSON.stringify({
 				comment: this.state.comment,
+				username: this.state.user_username,
 				video_id: this.state.videoID,
 				user_id: this.state.user_id,
 				reply_id: null
@@ -126,9 +129,7 @@ export default class Comments extends React.Component {
 		})
 		.then((response) => response.json())
 		.then((res) => {
-			console.log("got response from submitcomment")
 			if(res.success) {
-				console.log("got success", JSON.stringify(res.success));
 				this.state.comments.push(res.success)
 				this.setState({
 					comments: this.state.comments
@@ -143,75 +144,41 @@ export default class Comments extends React.Component {
 		this.setState({comment : text})
 	}
 
-	renderIfNoComments = (commentsArray) => {
-		if (!commentsArray) {
-			return (
-				<Text>There are no comments.</Text>
-			)
-		}
-	}
-
-
 	render() {
-		const CommentArea = (this.state.comments) ? 
-			<FlatList data={this.state.comments}
-				renderItem={({item}) => 
-					<Text style={styles.comment} >{item.comment}</Text>
-				}
-				keyExtractor = {item => item.id}
-			/> : null;
 		return (
-			<SafeAreaView style="container">
-				<View>
+			<SafeAreaView style={styles.container}>
+				<View style={styles.title}>
 					<Text>Comments</Text>
 				</View>
-				<View style="commentsArea">
-					{this.state.comments ?
-						<View>
-							<FlatList
-								data={this.state.comments}
-								renderItem={({item}) =>
-								<View>
+				<View>
+					<View style={styles.commentContainer}>
+						<FlatList
+							data={this.state.comments}
+							keyExtractor = {item => item.id}
+							style={styles.commentCard}
+							renderItem={({item, index}) =>
+								<View style={styles.commentBox}>
 									<View style={styles.userInfoBox}>
 										<Text style={styles.userInfo} >{item.username} </Text>
 									</View>
 									<Text style={styles.comment} >{item.comment}</Text>
 								</View>
-								}
-								keyExtractor = {item => item.id}
+							}
+						/>
+						<View style={styles.formArea}>
+							<TextInput style={styles.textInput} placeholder={this.state.commentPlaceHolder}
+								ref={input => { this.textInput = input }}
+								onChangeText={ (text)=> this.startComment(text)}
+								underlineColorAndroid='transparent'
 							/>
-							<View style="formArea">
-								<TextInput style={styles.textInput} placeholder={this.state.commentPlaceHolder}
-									ref={input => { this.textInput = input }}
-									onChangeText={ (text)=> this.startComment(text)}
-									underlineColorAndroid='transparent'
-								/>
-								<TouchableOpacity
-									style={styles.btn}
-									onPress={this.submitComment}
-								>
-									<Text>Post</Text>
-								</TouchableOpacity>
-							</View>
+							<TouchableOpacity
+								style={styles.btn}
+								onPress={this.submitComment}
+							>
+								<Text>Post</Text>
+							</TouchableOpacity>
 						</View>
-					:
-						<View>
-							<Text>There are no comments</Text>
-							<View style="formArea">
-								<TextInput style={styles.textInput} placeholder={this.state.commentPlaceHolder}
-									ref={input => { this.textInput = input }}
-									onChangeText={ (text)=> this.startComment(text)}
-									underlineColorAndroid='transparent'
-								/>
-								<TouchableOpacity
-									style={styles.btn}
-									onPress={this.submitComment}
-								>
-									<Text>Post</Text>
-								</TouchableOpacity>
-							</View>
-						</View>
-					}
+					</View>
 				</View>
 
 			</SafeAreaView>
@@ -221,60 +188,52 @@ export default class Comments extends React.Component {
 
 const styles = StyleSheet.create({
 	container: {
-		display: 'flex',
-		flex: 1,
-		flexDirection: 'column',
-		flexWrap: 'wrap',
-		flexBasis: 'auto',
-		backgroundColor: '#2896d3',
-		paddingLeft: 40,
-		paddingRight: 40,
-		borderColor: "red",
-		borderStyle: "solid",
-		borderWidth: 2,
-		alignItems: 'center'
 
 	},
-	userInfoBox: {
-		backgroundColor: '#808080'
+	title: {
+		alignItems: 'center',
 	},
-	userInfo : {
-		color: 'black',
-		fontWeight: 'bold'
-	}
-	,
+	commentContainer: {
+		alignItems: 'center',
+		justifyContent: 'center',		
+	},
+	formArea : {
+		width: 200,
+		alignItems: 'center',
+		justifyContent: 'center',
+	},
 	textInput: {
 		color: '#808080',
-		alignSelf: 'stretch',
 		padding: 16,
 		marginBottom: 20,
 		backgroundColor: '#fff'
 	},
     btn: {
-		alignSelf: 'stretch',
 		padding: 20,
 		backgroundColor: '#01c853',
 		alignItems: 'center'
 	},
-	comment: {
-		color:'#000000'
-	},
 	commentCard : {
 		backgroundColor: '#808080',
-		display: 'flex',
-		flexDirection:'row',
-		flexWrap:'wrap'
+		height: 150
 	},
-	commentsList : {
-		backgroundColor: "red",
-		height: 150,
+	commentBox: {
+		flexDirection: 'row',
+	},
+	userInfoBox: {
+		backgroundColor: '#808080',
 		display: 'flex',
 		flexBasis: 'auto'
 	},
-	commentsArea: {
-
+	userInfo : {
+		color: 'black',
+		fontWeight: 'bold',
+		display: 'flex',
+		flexBasis: 'auto'
 	},
-	formArea : {
-		backgroundColor: 'black'
+	comment: {
+		color:'#000000',
+		display: 'flex',
+		flexBasis: 'auto'
 	}
 });
