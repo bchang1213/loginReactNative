@@ -7,6 +7,8 @@ import LoginNavigator from './LoginNavigator';
 import VideoNavigator from './VideoNavigator';
 //Loading Screen to Show After Authentication
 import AuthLoadingScreen from '../screens/AuthLoadingScreen';
+//Conversation Screen to speak with another user
+import ConversationScreen from '../screens/ConversationScreen';
 
 //If Not logged in, show Login Navigator
 //If logged in, then show maintab navigator
@@ -16,6 +18,7 @@ export default createAppContainer(
       App: MainTabNavigator,
       Videos: VideoNavigator,
       Auth: LoginNavigator,
+      Conversation: ConversationScreen
     },
     {
       initialRouteName: 'AuthLoading',

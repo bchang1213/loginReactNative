@@ -16,7 +16,7 @@ socket.on('priorMessages', messages => {
 //User logins in and visualizes the full list of other users for chat.
 socket.on('gotUser', response => {
     const { user, users } = response;
-    store.dispatch(gotUser(user));
+    store.dispatch(gotUser(JSON.parse(user)));
     store.dispatch(gotUsers(users));
     navigate('App');
 });

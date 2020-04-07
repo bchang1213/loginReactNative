@@ -31,9 +31,12 @@ class HomeScreen extends React.Component {
 	}
 	//Called Once on client
 	componentDidMount () {
-        console.log("tips.props.user: ", this.props);
-		this._loadInitialState().done();
-		this.getVideos();
+        console.log("tips.props.user: ", this.props.user.id);
+        this._loadInitialState().done();
+
+        if(this.state.videos === null) {
+            this.getVideos();
+        }
 	}
 	//componentWillMount is called twice: once on server,
 	//and once on client. It is called after initial render
