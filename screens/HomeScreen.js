@@ -8,12 +8,14 @@ import {
     View,
     Image
 } from 'react-native';
+import { connect } from 'react-redux';
 import { Video } from 'expo-av';
 
-export default class HomeScreen extends React.Component {
+class HomeScreen extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
+            user: null,
 			user_id: null,
 			user_email: '',
 			user_firstName: '',
@@ -29,13 +31,17 @@ export default class HomeScreen extends React.Component {
 	}
 	//Called Once on client
 	componentDidMount () {
+        console.log("tips.props.user: ", this.props);
 		this._loadInitialState().done();
 		this.getVideos();
 	}
 	//componentWillMount is called twice: once on server,
 	//and once on client. It is called after initial render
 	//when client receives data from server and before the 
-	//data is displayed to browser.
+    //data is displayed to browser.
+	componentWillUnmount() {
+        this.setState({videos: null});
+	}
     _loadInitialState = async () => {
         try {
             var value = await AsyncStorage.getItem('user');
@@ -122,10 +128,19 @@ export default class HomeScreen extends React.Component {
 		);
 	}
 }
+/* Redux's this.props.user object is not explicitly used in this screen
+because we are currently using AsyncStorage to do a "is the user signedin?" check.
+later, when we implement Redux-Persist, this mapState function will be
+crucial.*/
+const mapState = (state) => ({
+    user: state.user
+  });
 
 HomeScreen.navigationOptions = {
     header: null,
 };
+
+export default connect(mapState) (HomeScreen);
 
 const styles = StyleSheet.create({
 	container: {

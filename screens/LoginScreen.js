@@ -5,11 +5,10 @@ import {
   TextInput,
   TouchableOpacity,
   KeyboardAvoidingView,
-  ScrollView,
-  Image,
   AsyncStorage,
   View,
 } from 'react-native';
+import { login } from '../store';
 export default class LoginScreen extends React.Component {
 
 	constructor(props) {
@@ -18,7 +17,8 @@ export default class LoginScreen extends React.Component {
 			email: '',
 			password: '',
 		};
-
+		this.handleChange = this.handleChange.bind(this);
+		this.loginSubmit = this.loginSubmit.bind(this);
 	}
 
 	componentDidMount () {
@@ -48,31 +48,12 @@ export default class LoginScreen extends React.Component {
 		}
 	}
 	
-	login = () => {
-		fetch('http://10.0.2.2:3000/signinUser', {
-			method: "POST",
-			headers: {
-				"Accept": "application/json",
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify({
-				email: this.state.email,
-				password: this.state.password
-			})
-		})
-		.then((response) => response.json())
-		.then((res) => {
-			if(res.success) {
-				AsyncStorage.setItem("user", JSON.stringify(res.success));
-				//This controls the switch navigator's state
-				this.props.navigation.navigate('App');
-			}
+	loginSubmit = () => {
+		login(this.state, this.props.navigation);
+	}
 
-			else {
-				alert("The provided login information was not valid.");
-			}
-		})
-		.done();
+	handleChange(type, value) {
+		this.setState({ [type]: value });
 	}
 
 	render() {
@@ -84,18 +65,24 @@ export default class LoginScreen extends React.Component {
 					</Text>
 
 					<TextInput style={styles.textInput} placeholder="Email"
-						onChangeText={ (email)=> this.setState({email})}
+						onChangeText={ (email)=> this.handleChange('email', email)}
 						underlineColorAndroid='transparent'
+						returnKeyType='next'
+						autoCorrect={ false }
+						onSubmitEditing={ () => this.passwordInput.focus() }
 					/>
 					<TextInput style={styles.textInput} placeholder="Password"
-						onChangeText={ (password)=> this.setState({password})}
+						onChangeText={ (password)=> this.handleChange('password', password)}
 						underlineColorAndroid='transparent'
 						secureTextEntry={true}
+						returnKeyType='go'
+						autoCapitalize='none'
+						ref={ input => this.passwordInput = input }
 					/>
 
 					<TouchableOpacity
 						style={styles.btn}
-						onPress={this.login}
+						onPress={this.loginSubmit}
 					>
 					<Text>Log In</Text>
 					</TouchableOpacity>

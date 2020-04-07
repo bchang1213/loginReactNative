@@ -5,7 +5,7 @@ import { createBottomTabNavigator } from 'react-navigation-tabs';
 
 import TabBarIcon from '../components/TabBarIcon';
 import VideoScreen from '../screens/VideoScreen';
-import LinksScreen from '../screens/LinksScreen';
+import ChatScreen from '../screens/ChatScreen';
 import SettingsScreen from '../screens/SettingsScreen';
 
 const config = Platform.select({
@@ -36,21 +36,21 @@ VideoStack.navigationOptions = {
 
 VideoStack.path = '';
 
-const LinksStack = createStackNavigator(
+const ChatStack = createStackNavigator(
   {
-    Links: LinksScreen,
+    Chat: ChatScreen,
   },
   config
 );
 
-LinksStack.navigationOptions = {
-  tabBarLabel: 'Links',
+ChatStack.navigationOptions = {
+  tabBarLabel: 'Chat',
   tabBarIcon: ({ focused }) => (
     <TabBarIcon focused={focused} name={Platform.OS === 'ios' ? 'ios-link' : 'md-link'} />
   ),
 };
 
-LinksStack.path = '';
+ChatStack.path = '';
 
 const SettingsStack = createStackNavigator(
   {
@@ -70,7 +70,7 @@ SettingsStack.path = '';
 
 const tabNavigator = createBottomTabNavigator({
   VideoStack,
-  LinksStack,
+  ChatStack,
   SettingsStack,
 });
 

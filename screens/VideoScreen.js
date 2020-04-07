@@ -37,7 +37,6 @@ export default class VideoScreen extends React.Component {
 	//data is displayed to browser.
 	componentDidMount () {
         this._loadInitialState().done();
-		this.getVideos();
 
 		Audio.setAudioModeAsync({
 			allowsRecordingIOS: false,
@@ -50,24 +49,25 @@ export default class VideoScreen extends React.Component {
 	 	//  This function will be called
 		this._loadNewPlaybackInstance(true);
 	}
+
 	componentWillUnmount() {
-		// this.playbackInstance.unloadAsync();
 	//  Check Your Console To verify that the above line is working
 		console.log('unmount');
 	}
+
 	/* Example focusedVideo JSON
 	{
 		"id":894,
 		"name":"side control to Kimura technique",
-		"uri":"/videos/291624955",
+		"uri":"/videos/29955",
 		"size640":{
-		   "link":"https://i.vimeocdn.com/video/732859021_640x360.jpg?r=pad",
+		   "link":"https://i.vimeocdn.com/video/732859360.jpg?r=pad",
 		   "width":640,
 		   "height":360,
-		   "link_with_play_button":"https://i.vimeocdn.com/filter/overlay?src0=https%3A%2F%2Fi.vimeocdn.com%2Fvideo%2F732859021_640x360.jpg&src1=http%3A%2F%2Ff.vimeocdn.com%2Fp%2Fimages%2Fcrawler_play.png"
+		   "link_with_play_button":"https://i.vimeocdn.com/filter/overlay?src0=https%3A%%2Fi.vimeocdn.com%2Fvideo%2F7321_640x360.jpg&src1=http%3A%%2Ff.vimeocdn.com%2Fawler_play.png"
 		},
 		"width":1280,
-		"link":"https://player.vimeo.com/external/291624955.hd.mp4?s=54fff849faa4e6274661fcf8513d8af7a2bc0439&profile_id=174&oauth2_token_id=1285094569"
+		"link":"https://player.vimeo.com/external/291624955.hd.mp4?s=54ffaa4e19&id=174&oauth2_token_id=1269"
 	 }
 	 */
     _loadInitialState = async () => {
@@ -103,7 +103,6 @@ export default class VideoScreen extends React.Component {
             console.log(error);
         }
 
-
 	}
 	
 	async _loadNewPlaybackInstance(playing) {
@@ -137,7 +136,7 @@ export default class VideoScreen extends React.Component {
 		this.playbackInstance.playAsync();
 	}
 
-	getVideos = () => {
+	//getVideos = () => {
 		// fetch('http://10.0.2.2:3000/getAllDBVideos', {
 		// 	method: "GET",
 		// 	headers: {
@@ -159,7 +158,7 @@ export default class VideoScreen extends React.Component {
 		// 	}
 		// })
 		// .done();
-    }
+    //}
     
     goBack = () => {
 		AsyncStorage.removeItem('focusedVideo');
