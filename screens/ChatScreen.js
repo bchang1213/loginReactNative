@@ -49,7 +49,7 @@ class ChatScreen extends React.Component {
 	}
 
 	goToConversation = (receivingUser, index) => {
-        
+        console.log("Going to convo: ", receivingUser);
 		this.props.navigation.navigate('Conversation', { receivingUser });
 	}
 
@@ -66,7 +66,7 @@ class ChatScreen extends React.Component {
 					renderItem={({item, index}) =>
 					<View>
 						<TouchableOpacity
-							onPress={(item, index) => this.goToConversation(item, index)}
+							onPress={() => this.goToConversation(item, index)}
 							style={styles.eachUser}
 						>
 							<View style={styles.usernameBox}>

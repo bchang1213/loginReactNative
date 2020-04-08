@@ -4,11 +4,13 @@ import {
 	Text,
     TouchableOpacity,
     FlatList,
+    SafeAreaView,
 	AsyncStorage,
     View,
     Image
 } from 'react-native';
 import { connect } from 'react-redux';
+import { withTheme } from 'react-native-elements';
 
 class ConversationScreen extends React.Component {
 	constructor(props) {
@@ -60,11 +62,25 @@ class ConversationScreen extends React.Component {
 
     }
 
+    goBack = () => {
+        this.props.navigation.navigate('Chat');
+    }
+
 	render() {
 		return (
-			<View style={styles.container}>
-                <Text>CHAT REACHED</Text>
-			</View>
+			<SafeAreaView style={styles.container}>
+                <View style={styles.conversationTitle}>
+                    <TouchableOpacity
+                        style={styles.btn}
+                        onPress={this.goBack}
+                    >
+                        <Text>Go Back</Text>
+                    </TouchableOpacity>
+                    <Text style={styles.titleText}>{this.props.receiver.username}</Text>
+                    <Text style={styles.titleText}>({this.props.receiver.first_name} {this.props.receiver.last_name})</Text>
+                    <Text style={styles.titleText}>{JSON.stringify(this.props.receiver)}</Text>
+                </View>
+			</SafeAreaView>
 		);
 	}
 }
@@ -72,8 +88,9 @@ class ConversationScreen extends React.Component {
 because we are currently using AsyncStorage to do a "is the user signedin?" check.
 later, when we implement Redux-Persist, this mapState function will be
 crucial.*/
-const mapState = (state) => ({
-    user: state.user
+const mapState = (state, { navigation }) => ({
+    user: state.user,
+    receiver: navigation.getParam('receivingUser')
   });
 
 ConversationScreen.navigationOptions = {
@@ -86,8 +103,22 @@ const styles = StyleSheet.create({
 	container: {
 		flex: 1,
 		alignItems: "center",
-		backgroundColor: "#3b3e40",
+		backgroundColor: "#000000",
 		paddingLeft: 40,
-        paddingRight: 40
-    }
+        paddingRight: 40,
+        paddingTop: 30
+    },
+    conversationTitle: {
+        
+    },
+    titleText: {
+        color: "#FFFFFF",
+
+    },
+    btn: {
+		alignSelf: "stretch",
+		padding: 20,
+		backgroundColor: "#01c853",
+		alignItems: "center"
+	}
 });
