@@ -58,9 +58,10 @@ class ConversationScreen extends React.Component {
                 </View>
                 <View style={styles.conversation}>
                     <FlatList
+                    style={styles.flatList}
                         data={this.props.messages}
                         keyExtractor = {item => item.id}
-                        style={styles.chatContainer}
+                        contentContainerStyle={styles.chatContainer}
                         renderItem={({item, index}) =>
                             <View style={styles.messageBox}>
                                 <View style={styles.userInfoBox}>
@@ -116,7 +117,20 @@ const styles = StyleSheet.create({
         
     },
     conversation : {
-        backgroundColor: "#A9A9A9"
+        backgroundColor: "#A9A9A9",
+        flexGrow: 1,
+    },
+    flatList : {
+        flexDirection: 'column-reverse'
+    },
+    chatContainer : {
+        flexDirection: 'column-reverse',
+        justifyContent: 'flex-end',
+        alignContent: 'flex-end',
+        flexWrap: 'nowrap'
+    },
+    messageBox : {
+
     },
     titleText: {
         color: "#FFFFFF",

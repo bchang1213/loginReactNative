@@ -5,7 +5,7 @@ import { AsyncStorage } from 'react-native';
 import socket from './socket';
 import users, { gotUsers, userOnline } from './users';
 import messages, { gotMessages, gotNewMessage } from './messages';
-import user, { gotUser } from './user';
+import user, { gotUser, removeUser } from './user';
 import focusPage, { currentPage, focusedVideo, defocusVideo } from './focusPage';
 
 const reducers = combineReducers({ users, messages, user, focusPage });
@@ -84,6 +84,11 @@ export const login = (credentials, navigation) => {
         }
     })
     .done();
+};
+
+export const logOut = (navigation) => {
+    store.dispatch(removeUser());
+    navigation.navigate('Auth');
 };
 
 export const openChat = (user, receiver) => {

@@ -1,4 +1,3 @@
-import * as WebBrowser from 'expo-web-browser';
 import React from 'react';
 import {
 	StyleSheet,
@@ -7,53 +6,22 @@ import {
 	AsyncStorage,
 	View,
 } from 'react-native';
+import { connect } from 'react-redux';
+import { logOut } from '../store';
 
-export default class HomeScreen extends React.Component {
+class SettingsScreen extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			user_id: null,
-			user_email: '',
-			user_firstName: '',
-			user_lastName: '',
-			user_team: '',
-			user_professor: '',
-			user_username: '',
-			user_role: 0
 		};
 	}
 
 	componentDidMount () {
-		this._loadInitialState().done();
 	}
-
-    _loadInitialState = async () => {
-        try {
-            var value = await AsyncStorage.getItem('user');
-            if (value !== null) {
-                //This Controls switch navigator's state
-                var userJSON = JSON.parse(value);
-                this.setState({user_id: userJSON.id});
-                this.setState({user_email: userJSON.email});
-                this.setState({user_firstName: userJSON.first_name});
-                this.setState({user_lastName: userJSON.last_name});
-                this.setState({user_team: userJSON.user_team});
-                this.setState({user_professor: userJSON.professor});
-                this.setState({user_username: userJSON.username});
-                this.setState({user_role: userJSON.user_role});
-            }
-        }
-        catch (error) {
-            console.log(error);
-        }
-
-
-    }
 
 	logOut = () => {
 		alert("logging out");
-		AsyncStorage.removeItem("user");
-		this.props.navigation.navigate('Auth');
+		logOut(this.props.navigation);
 	}
 
 	getVideos = () => {
@@ -103,7 +71,7 @@ export default class HomeScreen extends React.Component {
 	render() {
 		return (
 			<View style={styles.container} >
-			{this.state.user_role === 1 ?
+			{this.props.user.user_role === 1 ?
 			<TouchableOpacity
 				style={styles.btn}
 				onPress={this.getVideos}
@@ -122,9 +90,16 @@ export default class HomeScreen extends React.Component {
 	}
 }
 
-HomeScreen.navigationOptions = {
+const mapState = (state) => ({
+    user: state.user,
+    focusPage: state.focusPage
+});
+
+SettingsScreen.navigationOptions = {
 	header: null,
 };
+
+export default connect(mapState) (SettingsScreen);
 
 const styles = StyleSheet.create({
     wrapper : {

@@ -23,6 +23,7 @@ class LoginScreen extends React.Component {
 	}
 
 	componentDidMount () {
+
 		if (this.props.user.id) {
 			//This Controls switch navigator's state
 			this.props.navigation.navigate('App');
