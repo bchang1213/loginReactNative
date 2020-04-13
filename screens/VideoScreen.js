@@ -2,14 +2,12 @@ import React from 'react';
 import {
 	StyleSheet,
 	Text,
-	TextInput,
 	SafeAreaView,
-    TouchableOpacity,
-	AsyncStorage,
-    View,
+    TouchableOpacity
 } from 'react-native';
 import Comments from '../components/Comments';
 import { connect } from 'react-redux';
+import { deleteFocus } from '../store';
 import { Video, Audio } from 'expo-av';
 
 class VideoScreen extends React.Component {
@@ -37,7 +35,6 @@ class VideoScreen extends React.Component {
 	 }
 	 */
 	componentDidMount () {
-		console.log("User object: ", JSON.stringify(this.props.user))
 		Audio.setAudioModeAsync({
 			allowsRecordingIOS: false,
 			interruptionModeIOS: Audio.INTERRUPTION_MODE_IOS_DO_NOT_MIX,
@@ -91,8 +88,7 @@ class VideoScreen extends React.Component {
 	}
     
     goBack = () => {
-		AsyncStorage.removeItem('focusedVideo');
-        this.props.navigation.navigate('App');
+		deleteFocus(this.props.navigation);
     }
 
 	handleVideoMount = ref => {

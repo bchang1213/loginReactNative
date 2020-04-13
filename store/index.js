@@ -6,7 +6,7 @@ import socket from './socket';
 import users, { gotUsers, userOnline } from './users';
 import messages, { gotMessages, gotNewMessage } from './messages';
 import user, { gotUser } from './user';
-import focusPage, { currentPage, focusedVideo } from './focusPage';
+import focusPage, { currentPage, focusedVideo, defocusVideo } from './focusPage';
 
 const reducers = combineReducers({ users, messages, user, focusPage });
 
@@ -97,6 +97,11 @@ export const openChat = (user, receiver) => {
 export const focusOnVideo = (videoObject, navigation) => {
     store.dispatch(focusedVideo(videoObject));
     navigation.navigate('Videos');
+};
+
+export const deleteFocus = (navigation) => {
+    store.dispatch(defocusVideo());
+    navigation.navigate('App');
 };
 
 export const sendMessage = (text, sender, receiver) => {

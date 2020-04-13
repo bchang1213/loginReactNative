@@ -5,7 +5,6 @@ import {
   TextInput,
   TouchableOpacity,
   KeyboardAvoidingView,
-  AsyncStorage,
   View,
 } from 'react-native';
 import { connect } from 'react-redux';

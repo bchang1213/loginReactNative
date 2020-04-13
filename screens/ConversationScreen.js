@@ -3,11 +3,8 @@ import {
 	StyleSheet,
 	Text,
     TouchableOpacity,
-    FlatList,
     SafeAreaView,
-	AsyncStorage,
-    View,
-    Image
+    View
 } from 'react-native';
 import { connect } from 'react-redux';
 import { openChat, sendMessage } from '../store';
@@ -16,23 +13,12 @@ class ConversationScreen extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-            user: null,
-			user_id: null,
-			user_email: '',
-			user_firstName: '',
-			user_lastName: '',
-			user_team: '',
-			user_professor: '',
-			user_username: '',
-            user_role: 0,
-            videos: null
         };
 
 	}
 	//Called Once on client
 	componentDidMount () {
         openChat(this.props.user, this.props.receiver);
-        this._loadInitialState().done();
 	}
 	//componentWillMount is called twice: once on server,
 	//and once on client. It is called after initial render
@@ -41,27 +27,6 @@ class ConversationScreen extends React.Component {
 	componentWillUnmount() {
         this.setState({videos: null});
 	}
-    _loadInitialState = async () => {
-        try {
-            var value = await AsyncStorage.getItem('user');
-            if (value !== null) {
-                //This Controls switch navigator's state
-                var userJSON = JSON.parse(value);
-                this.setState({user_id: userJSON.id});
-                this.setState({user_email: userJSON.email});
-                this.setState({user_firstName: userJSON.first_name});
-                this.setState({user_lastName: userJSON.last_name});
-                this.setState({user_team: userJSON.user_team});
-                this.setState({user_professor: userJSON.professor});
-                this.setState({user_username: userJSON.username});
-                this.setState({user_role: userJSON.user_role});
-            }
-        }
-        catch (error) {
-            console.log(error);
-        }
-
-    }
     
     send(message) {
         sendMessage(message.text, this.props.user, this.props.receiver);
@@ -85,7 +50,7 @@ class ConversationScreen extends React.Component {
                     <Text style={styles.titleText}>({this.props.receiver.first_name} {this.props.receiver.last_name})</Text>
                     <Text style={styles.titleText}>RECEIVER:{JSON.stringify(this.props.receiver)}</Text>
                     <Text style={styles.titleText}>USER: {JSON.stringify(this.props.user)}</Text>
-                    <Text style={styles.titleText}>Comments: {JSON.stringify(this.props.comments)}</Text>
+                    <Text style={styles.titleText}>Messages: {JSON.stringify(this.props.messages)}</Text>
                 </View>
 			</SafeAreaView>
 		);

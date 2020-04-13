@@ -2,10 +2,8 @@ import React from 'react';
 import {
 	StyleSheet,
 	Text,
-    TouchableOpacity,
     FlatList,
-    View,
-    Image
+    View
 } from 'react-native';
 import { connect } from 'react-redux';
 import { focusOnVideo } from '../store';
@@ -21,7 +19,7 @@ class HomeScreen extends React.Component {
 	}
 	//Called Once on client
 	componentDidMount () {
-        console.log("this user: ", JSON.stringify(this.props.user))
+
         if(this.state.videos === null) {
             this.getVideos();
         }
@@ -101,8 +99,9 @@ because we are currently using AsyncStorage to do a "is the user signedin?" chec
 later, when we implement Redux-Persist, this mapState function will be
 crucial.*/
 const mapState = (state) => ({
-    user: state.user
-  });
+    user: state.user,
+    focusPage: state.focusPage
+});
 
 HomeScreen.navigationOptions = {
     header: null,
