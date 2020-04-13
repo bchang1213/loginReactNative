@@ -5,8 +5,6 @@ import {
 	TouchableOpacity,
 	FlatList,
 	SafeAreaView,
-	ScrollView,
-	AsyncStorage,
 	Text,
     View,
 } from 'react-native';
@@ -157,7 +155,7 @@ const styles = StyleSheet.create({
 	},
 	commentContainer: {
 		alignItems: 'center',
-		justifyContent: 'center',		
+		justifyContent: 'center',
 	},
 	formArea : {
 		width: 200,

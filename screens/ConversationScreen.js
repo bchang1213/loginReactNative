@@ -3,7 +3,9 @@ import {
 	StyleSheet,
 	Text,
     TouchableOpacity,
+    TextInput,
     SafeAreaView,
+    FlatList,
     View
 } from 'react-native';
 import { connect } from 'react-redux';
@@ -13,6 +15,8 @@ class ConversationScreen extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
+            messagePlaceHolder: 'Type a message',
+
         };
 
 	}
@@ -48,9 +52,37 @@ class ConversationScreen extends React.Component {
                     </TouchableOpacity>
                     <Text style={styles.titleText}>{this.props.receiver.username}</Text>
                     <Text style={styles.titleText}>({this.props.receiver.first_name} {this.props.receiver.last_name})</Text>
-                    <Text style={styles.titleText}>RECEIVER:{JSON.stringify(this.props.receiver)}</Text>
+                    {/* <Text style={styles.titleText}>RECEIVER:{JSON.stringify(this.props.receiver)}</Text>
                     <Text style={styles.titleText}>USER: {JSON.stringify(this.props.user)}</Text>
-                    <Text style={styles.titleText}>Messages: {JSON.stringify(this.props.messages)}</Text>
+                    <Text style={styles.titleText}>Messages: {JSON.stringify(this.props.messages)}</Text> */}
+                </View>
+                <View style={styles.conversation}>
+                    <FlatList
+                        data={this.props.messages}
+                        keyExtractor = {item => item.id}
+                        style={styles.chatContainer}
+                        renderItem={({item, index}) =>
+                            <View style={styles.messageBox}>
+                                <View style={styles.userInfoBox}>
+                                    <Text style={styles.userInfo}>{item.username}</Text>
+                                </View>
+                                <Text style={styles.message} >{item.text}</Text>
+                            </View>
+                        }
+                    />
+                </View>
+                <View style={styles.inputArea}>
+                    <TextInput style={styles.textInput} placeholder={this.state.messagePlaceHolder}
+                        ref={input => { this.textInput = input }}
+                        onChangeText={ (text)=> this.startComment(text)}
+                        underlineColorAndroid='transparent'
+                    />
+                    <TouchableOpacity
+                        style={styles.submitMessage}
+                        onPress={this.submitComment}
+                    >
+                        <Text>></Text>
+                    </TouchableOpacity>
                 </View>
 			</SafeAreaView>
 		);
@@ -75,7 +107,6 @@ export default connect(mapState) (ConversationScreen);
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		alignItems: "center",
 		backgroundColor: "#000000",
 		paddingLeft: 40,
         paddingRight: 40,
@@ -83,6 +114,9 @@ const styles = StyleSheet.create({
     },
     conversationTitle: {
         
+    },
+    conversation : {
+        backgroundColor: "#A9A9A9"
     },
     titleText: {
         color: "#FFFFFF",
@@ -93,5 +127,26 @@ const styles = StyleSheet.create({
 		padding: 20,
 		backgroundColor: "#01c853",
 		alignItems: "center"
-	}
+    },
+    inputArea : {
+        flexDirection: 'row'
+    },
+    textInput : {
+        flexGrow: 2
+    },
+    submitMessage: {
+		alignSelf: "stretch",
+		padding: 5,
+		backgroundColor: "#01c853",
+        width: 20,
+    },
+    message : {
+        color: '#FFFFFF'
+    },
+    userInfo : {
+        color : '#FFFFFF'
+    },
+    userInfoBox : {
+
+    },
 });
