@@ -10,7 +10,7 @@ import {
     Image
 } from 'react-native';
 import { connect } from 'react-redux';
-import { withTheme } from 'react-native-elements';
+import { openChat, sendMessage } from '../store';
 
 class ConversationScreen extends React.Component {
 	constructor(props) {
@@ -31,6 +31,7 @@ class ConversationScreen extends React.Component {
 	}
 	//Called Once on client
 	componentDidMount () {
+        openChat(this.props.user, this.props.receiver);
         this._loadInitialState().done();
 	}
 	//componentWillMount is called twice: once on server,
@@ -61,6 +62,10 @@ class ConversationScreen extends React.Component {
         }
 
     }
+    
+    send(message) {
+        sendMessage(message.text, this.props.user, this.props.receiver);
+      }
 
     goBack = () => {
         this.props.navigation.navigate('Chat');
@@ -78,7 +83,9 @@ class ConversationScreen extends React.Component {
                     </TouchableOpacity>
                     <Text style={styles.titleText}>{this.props.receiver.username}</Text>
                     <Text style={styles.titleText}>({this.props.receiver.first_name} {this.props.receiver.last_name})</Text>
-                    <Text style={styles.titleText}>{JSON.stringify(this.props.receiver)}</Text>
+                    <Text style={styles.titleText}>RECEIVER:{JSON.stringify(this.props.receiver)}</Text>
+                    <Text style={styles.titleText}>USER: {JSON.stringify(this.props.user)}</Text>
+                    <Text style={styles.titleText}>Comments: {JSON.stringify(this.props.comments)}</Text>
                 </View>
 			</SafeAreaView>
 		);
@@ -90,7 +97,8 @@ later, when we implement Redux-Persist, this mapState function will be
 crucial.*/
 const mapState = (state, { navigation }) => ({
     user: state.user,
-    receiver: navigation.getParam('receivingUser')
+    receiver: navigation.getParam('receivingUser'),
+    messages: state.messages
   });
 
 ConversationScreen.navigationOptions = {

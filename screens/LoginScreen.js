@@ -8,8 +8,10 @@ import {
   AsyncStorage,
   View,
 } from 'react-native';
+import { connect } from 'react-redux';
 import { login } from '../store';
-export default class LoginScreen extends React.Component {
+
+class LoginScreen extends React.Component {
 
 	constructor(props) {
 		super(props);
@@ -22,32 +24,12 @@ export default class LoginScreen extends React.Component {
 	}
 
 	componentDidMount () {
-		this._loadInitialState().done();
-	}
-
-	_loadInitialState = async () => {
-		try {
-			var value = await AsyncStorage.getItem('user');
-			if (value !== null) {
-				//This Controls switch navigator's state
-				this.props.navigation.navigate('App');
-			}
-		}
-		catch (error) {
-			console.log(error);
+		if (this.props.user.id) {
+			//This Controls switch navigator's state
+			this.props.navigation.navigate('App');
 		}
 	}
 
-	storeData = async (key, value) => {
-		//key and value are both strings
-		try {
-			await AsyncStorage.setItem(key, value)
-		} catch (e) {
-			// saving error
-			console.log(e);
-		}
-	}
-	
 	loginSubmit = () => {
 		login(this.state, this.props.navigation);
 	}
@@ -93,9 +75,16 @@ export default class LoginScreen extends React.Component {
 	}
 }
 
+const mapState = (state) => ({
+    user: state.user ? state.user : null
+  });
+
+
 LoginScreen.navigationOptions = {
   header: null,
 };
+
+export default connect(mapState) (LoginScreen);
 
 const styles = StyleSheet.create({
 	wrapper : {

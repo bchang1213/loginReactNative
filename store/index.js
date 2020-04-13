@@ -1,11 +1,39 @@
-import { createStore, combineReducers } from 'redux';
+import { createStore, combineReducers, applyMiddleware } from 'redux';
+import { createLogger } from 'redux-logger';
+import { persistStore, persistReducer } from 'redux-persist';
 import { AsyncStorage } from 'react-native';
 import socket from './socket';
 import users, { gotUsers, userOnline } from './users';
 import messages, { gotMessages, gotNewMessage } from './messages';
 import user, { gotUser } from './user';
-const reducers = combineReducers({ users, messages, user });
-const store = createStore(reducers);
+import focusPage, { currentPage, focusedVideo } from './focusPage';
+
+const reducers = combineReducers({ users, messages, user, focusPage });
+
+// Middleware: Redux Persist Config
+const persistConfig = {
+    key: 'root',
+    storage: AsyncStorage,
+    whitelist: [
+        'users',
+        'messages',
+        'user'
+    ],
+    blacklist: [
+        'focusPage',
+    ],
+};
+
+// Middleware: Redux Persist Persisted Reducer
+const persistedReducer = persistReducer(persistConfig, reducers);
+
+const store = createStore(
+    persistedReducer,
+    // applyMiddleware(createLogger())
+);
+
+// Middleware: Redux Persist Persister
+let persistor = persistStore(store);
 
 let navigate = null;
 
@@ -45,7 +73,6 @@ export const login = (credentials, navigation) => {
     .then((response) => response.json())
     .then((res) => {
         if(res.success) {
-            AsyncStorage.setItem("user", JSON.stringify(res.success));
             /*Emitting to this socket will get all users and then save the current user into redux.*/
             socket.emit('getAllUsers', JSON.stringify(res.success));
             //This controls the switch navigator's state
@@ -59,8 +86,17 @@ export const login = (credentials, navigation) => {
     .done();
 };
 
-export const openChat = users => {
+export const openChat = (user, receiver) => {
+    var users = {
+        user: user,
+        receiver: receiver
+    };
     socket.emit('chat', users);
+};
+
+export const focusOnVideo = (videoObject, navigation) => {
+    store.dispatch(focusedVideo(videoObject));
+    navigation.navigate('Videos');
 };
 
 export const sendMessage = (text, sender, receiver) => {
@@ -68,6 +104,11 @@ export const sendMessage = (text, sender, receiver) => {
 };
 
 
-export default store;
+export {
+    store,
+    persistor,
+};
+
 export * from './users';
 export * from './messages';
+export * from './focusPage';

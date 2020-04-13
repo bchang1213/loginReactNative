@@ -4,36 +4,24 @@ import {
 	Text,
     TouchableOpacity,
     FlatList,
-	AsyncStorage,
     View,
     Image
 } from 'react-native';
 import { connect } from 'react-redux';
+import { focusOnVideo } from '../store';
 import { Video } from 'expo-av';
 
 class HomeScreen extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-            user: null,
-			user_id: null,
-			user_email: '',
-			user_firstName: '',
-			user_lastName: '',
-			user_team: '',
-			user_professor: '',
-			user_username: '',
-            user_role: 0,
             videos: null
         };
         
-        this.goToVideo = this.goToVideo.bind(this);
 	}
 	//Called Once on client
 	componentDidMount () {
-        console.log("tips.props.user: ", this.props.user.id);
-        this._loadInitialState().done();
-
+        console.log("this user: ", JSON.stringify(this.props.user))
         if(this.state.videos === null) {
             this.getVideos();
         }
@@ -43,29 +31,7 @@ class HomeScreen extends React.Component {
 	//when client receives data from server and before the 
     //data is displayed to browser.
 	componentWillUnmount() {
-        this.setState({videos: null});
 	}
-    _loadInitialState = async () => {
-        try {
-            var value = await AsyncStorage.getItem('user');
-            if (value !== null) {
-                //This Controls switch navigator's state
-                var userJSON = JSON.parse(value);
-                this.setState({user_id: userJSON.id});
-                this.setState({user_email: userJSON.email});
-                this.setState({user_firstName: userJSON.first_name});
-                this.setState({user_lastName: userJSON.last_name});
-                this.setState({user_team: userJSON.user_team});
-                this.setState({user_professor: userJSON.professor});
-                this.setState({user_username: userJSON.username});
-                this.setState({user_role: userJSON.user_role});
-            }
-        }
-        catch (error) {
-            console.log(error);
-        }
-
-    }
 
 	getVideos = () => {
 		fetch('http://10.0.2.2:3000/getAllDBVideos', {
@@ -91,8 +57,7 @@ class HomeScreen extends React.Component {
     }
     
 	goToVideo = (item) => {
-        AsyncStorage.setItem('focusedVideo', JSON.stringify(item));
-		this.props.navigation.navigate('Videos');
+        focusOnVideo(item, this.props.navigation);
 	}
 
 	handleVideoMount = ref => {

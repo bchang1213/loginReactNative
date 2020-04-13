@@ -10,70 +10,25 @@ import {
 	Text,
     View,
 } from 'react-native';
-import { List, ListItem } from "react-native-elements";
+import { connect } from 'react-redux';
 
-export default class Comments extends React.Component {
+class Comments extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			user_id: null,
-			user_email: '',
-			user_firstName: '',
-			user_lastName: '',
-			user_team: '',
-			user_professor: '',
-			user_username: '',
-			user_role: 0,
-			videoID: null,
-			videoURI: '',
-			videoTitle: '',
-			comments: null,
+			comments: [],
 			comment: '',
 			commentPlaceHolder: "Leave a comment"
 		};
-
+		this.getComments = this.getComments.bind(this);
 		this.submitComment = this.submitComment.bind(this);
 	}
 	//Called Once on client
 	componentDidMount () {
-		this._loadInitialState().done();
+		console.log("Comment User: ", JSON.stringify(this.props.user))
+		this.getComments();
 	}
-    _loadInitialState = async () => {
-        try {
-			var value = await AsyncStorage.getItem('user');
-			var focusedVideo = await AsyncStorage.getItem('focusedVideo');
-            if (value !== null) {
-                //This Controls switch navigator's state
-                var userJSON = JSON.parse(value);
-                this.setState({user_id: userJSON.id});
-                this.setState({user_email: userJSON.email});
-                this.setState({user_firstName: userJSON.first_name});
-                this.setState({user_lastName: userJSON.last_name});
-                this.setState({user_team: userJSON.user_team});
-				this.setState({user_professor: userJSON.professor});
-				console.log("User name deteced: ", userJSON.username);
-                this.setState({user_username: userJSON.username});
-				this.setState({user_role: userJSON.user_role});
-			}
-			
-			if (focusedVideo !== null) {
-				var focusedVideoJSON = JSON.parse(focusedVideo);
 
-				this.setState({videoID: focusedVideoJSON.id});
-
-				this.setState({videoURI: focusedVideoJSON.link});
-
-				this.setState({videoTitle: focusedVideoJSON.name});
-				/*getComments requires videoID, so make sure videoID state is set before running */
-				this.getComments();
-
-			}
-        }
-        catch (error) {
-            console.log(error);
-        }
-	}
-	
 	getComments = () => {
 		fetch('http://10.0.2.2:3000/getAllCommentsForVideoID', {
 			method: 'POST',
@@ -82,7 +37,7 @@ export default class Comments extends React.Component {
 				'Content-Type': 'application/json',
 			},
 			body: JSON.stringify({
-				video_id: this.state.videoID,
+				video_id: this.props.video.id,
 			})
 		})
 		.then((response) => response.json())
@@ -121,15 +76,16 @@ export default class Comments extends React.Component {
 			},
 			body: JSON.stringify({
 				comment: this.state.comment,
-				username: this.state.user_username,
-				video_id: this.state.videoID,
-				user_id: this.state.user_id,
+				username: this.props.user.username,
+				video_id: this.props.video.id,
+				user_id: this.props.user.id,
 				reply_id: null
 			})
 		})
 		.then((response) => response.json())
 		.then((res) => {
 			if(res.success) {
+				console.log("comments got: ", res.success)
 				this.state.comments.push(res.success)
 				this.setState({
 					comments: this.state.comments
@@ -185,6 +141,12 @@ export default class Comments extends React.Component {
 		);
 	}
 }
+const mapState = (state) => ({
+	user: state.user,
+	video: state.focusPage
+});
+
+export default connect(mapState) (Comments);
 
 const styles = StyleSheet.create({
 	container: {

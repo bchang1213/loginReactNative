@@ -9,52 +9,18 @@ import {
     View,
 } from 'react-native';
 import Comments from '../components/Comments';
+import { connect } from 'react-redux';
 import { Video, Audio } from 'expo-av';
 
-export default class VideoScreen extends React.Component {
+class VideoScreen extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			user_id: null,
-			user_email: '',
-			user_firstName: '',
-			user_lastName: '',
-			user_team: '',
-			user_professor: '',
-			user_username: '',
-			user_role: 0,
-			videoID: null,
-			videoURI: '',
-			videoTitle: ''
 		};
 
 		this.playbackInstance = null;
 	}
 	//Called Once on client
-	//componentWillMount is called twice: once on server,
-	//and once on client. It is called after initial render
-	//when client receives data from server and before the 
-	//data is displayed to browser.
-	componentDidMount () {
-        this._loadInitialState().done();
-
-		Audio.setAudioModeAsync({
-			allowsRecordingIOS: false,
-			interruptionModeIOS: Audio.INTERRUPTION_MODE_IOS_DO_NOT_MIX,
-			playsInSilentModeIOS: true,
-			shouldDuckAndroid: true,
-			interruptionModeAndroid:          Audio.INTERRUPTION_MODE_ANDROID_DO_NOT_MIX,
-			playThroughEarpieceAndroid: false,
-		});
-	 	//  This function will be called
-		this._loadNewPlaybackInstance(true);
-	}
-
-	componentWillUnmount() {
-	//  Check Your Console To verify that the above line is working
-		console.log('unmount');
-	}
-
 	/* Example focusedVideo JSON
 	{
 		"id":894,
@@ -70,39 +36,27 @@ export default class VideoScreen extends React.Component {
 		"link":"https://player.vimeo.com/external/291624955.hd.mp4?s=54ffaa4e19&id=174&oauth2_token_id=1269"
 	 }
 	 */
-    _loadInitialState = async () => {
-        try {
-			var value = await AsyncStorage.getItem('user');
-			var focusedVideo = await AsyncStorage.getItem('focusedVideo');
-            if (value !== null) {
-                //This Controls switch navigator's state
-                var userJSON = JSON.parse(value);
-                this.setState({user_id: userJSON.id});
-                this.setState({user_email: userJSON.email});
-                this.setState({user_firstName: userJSON.first_name});
-                this.setState({user_lastName: userJSON.last_name});
-                this.setState({user_team: userJSON.user_team});
-                this.setState({user_professor: userJSON.professor});
-                this.setState({user_username: userJSON.username});
-				this.setState({user_role: userJSON.user_role});
-			}
-			
-			if (focusedVideo !== null) {
-				var focusedVideoJSON = JSON.parse(focusedVideo);
+	componentDidMount () {
+		console.log("User object: ", JSON.stringify(this.props.user))
+		Audio.setAudioModeAsync({
+			allowsRecordingIOS: false,
+			interruptionModeIOS: Audio.INTERRUPTION_MODE_IOS_DO_NOT_MIX,
+			playsInSilentModeIOS: true,
+			shouldDuckAndroid: true,
+			interruptionModeAndroid:          Audio.INTERRUPTION_MODE_ANDROID_DO_NOT_MIX,
+			playThroughEarpieceAndroid: false,
+		});
+	 	//  This function will be called
+		this._loadNewPlaybackInstance(true);
+	}
 
-				this.setState({videoID: focusedVideoJSON.id});
-
-				this.setState({videoURI: focusedVideoJSON.link});
-
-				this.setState({videoTitle: focusedVideoJSON.name});
-
-			}
-			
-        }
-        catch (error) {
-            console.log(error);
-        }
-
+	/*componentWillMount is called twice: once on server,
+	and once on client. It is called after initial render
+	when client receives data from server and before the 
+	data is displayed to browser.*/
+	componentWillUnmount() {
+	//  Check Your Console To verify that the above line is working
+		console.log('unmount');
 	}
 	
 	async _loadNewPlaybackInstance(playing) {
@@ -111,7 +65,7 @@ export default class VideoScreen extends React.Component {
 			this.playbackInstance.setOnPlaybackStatusUpdate(null);
 			this.playbackInstance = null;
 		 }
-		 const source = JSON.stringify(this.state.videoURI);
+		 const source = JSON.stringify(this.props.video.uri);
 		 const initialStatus = {
 	//        Play by default
 			  shouldPlay: true,
@@ -135,30 +89,6 @@ export default class VideoScreen extends React.Component {
 	//  Play the Music
 		this.playbackInstance.playAsync();
 	}
-
-	//getVideos = () => {
-		// fetch('http://10.0.2.2:3000/getAllDBVideos', {
-		// 	method: "GET",
-		// 	headers: {
-		// 		"Accept": "application/json",
-		// 		"Content-Type": "application/json",
-		// 	}
-		// })
-		// .then((response) => response.json())
-		// .then((res) => {
-		
-		// 	if(res.success) {
-        //         //Make videos available to component for display render.
-        //         console.log("Type: " + JSON.stringify(res.success));
-        //         this.setState({videos: res.success});
-		// 	}
-
-		// 	else {
-		// 		alert("getVideos" + res.error);
-		// 	}
-		// })
-		// .done();
-    //}
     
     goBack = () => {
 		AsyncStorage.removeItem('focusedVideo');
@@ -178,17 +108,17 @@ export default class VideoScreen extends React.Component {
                 >
                     <Text>Go Back</Text>
                 </TouchableOpacity>
-				{this.state.videoTitle ?
+				{this.props.video.name ?
 				<Text
 				style={styles.videoTitle}
 				>
-					{ this.state.videoTitle}
+					{ this.props.video.name}
 				</Text>
 				: null }
-				{this.state.videoID && this.state.videoURI ?
+				{this.props.video.id && this.props.video.link ?
 				<Video
-				id={this.state.videoID}
-				source={{ uri : this.state.videoURI }}
+				id={this.props.video.id}
+				source={{ uri : this.props.video.link  }}
 				rate={1.0}
 				volume={1.0}
 				isMuted={false}
@@ -204,9 +134,16 @@ export default class VideoScreen extends React.Component {
 	}
 }
 
+const mapState = (state) => ({
+	user: state.user,
+	video: state.focusPage
+});
+
 VideoScreen.navigationOptions = {
 	header: null,
 };
+
+export default connect(mapState) (VideoScreen);
 
 const styles = StyleSheet.create({
 	container: {
