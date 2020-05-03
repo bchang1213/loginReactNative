@@ -19,7 +19,6 @@ class HomeScreen extends React.Component {
 	}
 	//Called Once on client
 	componentDidMount () {
-
         if(this.state.videos === null) {
             this.getVideos();
         }

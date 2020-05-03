@@ -9,6 +9,7 @@ import {
     View
 } from 'react-native';
 import { connect } from 'react-redux';
+import { GiftedChat } from 'react-native-gifted-chat';
 import { openChat, sendMessage } from '../store';
 
 class ConversationScreen extends React.Component {
@@ -16,13 +17,13 @@ class ConversationScreen extends React.Component {
 		super(props);
 		this.state = {
             messagePlaceHolder: 'Type a message',
-
+            receiver: this.props.navigation.getParam('receivingUser')
         };
-
+        this.send = this.send.bind(this);
 	}
 	//Called Once on client
 	componentDidMount () {
-        openChat(this.props.user, this.props.receiver);
+        openChat(this.props.user, this.state.receiver);
 	}
 	//componentWillMount is called twice: once on server,
 	//and once on client. It is called after initial render
@@ -33,7 +34,7 @@ class ConversationScreen extends React.Component {
 	}
     
     send(message) {
-        sendMessage(message.text, this.props.user, this.props.receiver);
+        sendMessage(message.text, this.props.user.id, this.state.receiver.id, this.props.messages[0].conversation_id);
       }
 
     goBack = () => {
@@ -50,41 +51,21 @@ class ConversationScreen extends React.Component {
                     >
                         <Text>Go Back</Text>
                     </TouchableOpacity>
-                    <Text style={styles.titleText}>{this.props.receiver.username}</Text>
-                    <Text style={styles.titleText}>({this.props.receiver.first_name} {this.props.receiver.last_name})</Text>
-                    {/* <Text style={styles.titleText}>RECEIVER:{JSON.stringify(this.props.receiver)}</Text>
+                    <Text style={styles.titleText}>{this.state.receiver.username}</Text>
+                    <Text style={styles.titleText}>({this.state.receiver.first_name} {this.state.receiver.last_name})</Text>
+                    <Text style={styles.titleText}>convo id: {JSON.stringify(this.props.messages)}</Text>
+                    <Text style={styles.titleText}>messages json: {JSON.stringify(this.props.messages)}</Text>
+                    {/* <Text style={styles.titleText}>RECEIVER:{JSON.stringify(this.state.receiver)}</Text>
                     <Text style={styles.titleText}>USER: {JSON.stringify(this.props.user)}</Text>
                     <Text style={styles.titleText}>Messages: {JSON.stringify(this.props.messages)}</Text> */}
                 </View>
-                <View style={styles.conversation}>
-                    <FlatList
-                    style={styles.flatList}
-                        data={this.props.messages}
-                        keyExtractor = {item => item.id}
-                        contentContainerStyle={styles.chatContainer}
-                        renderItem={({item, index}) =>
-                            <View style={styles.messageBox}>
-                                <View style={styles.userInfoBox}>
-                                    <Text style={styles.userInfo}>{item.username}</Text>
-                                </View>
-                                <Text style={styles.message} >{item.text}</Text>
-                            </View>
-                        }
-                    />
-                </View>
-                <View style={styles.inputArea}>
-                    <TextInput style={styles.textInput} placeholder={this.state.messagePlaceHolder}
-                        ref={input => { this.textInput = input }}
-                        onChangeText={ (text)=> this.startComment(text)}
-                        underlineColorAndroid='transparent'
-                    />
-                    <TouchableOpacity
-                        style={styles.submitMessage}
-                        onPress={this.submitComment}
-                    >
-                        <Text>></Text>
-                    </TouchableOpacity>
-                </View>
+                <GiftedChat
+                    messages={ this.props.messages[1] }
+                    user={{
+                        _id: this.props.user.id
+                    }}
+                    onSend={ message => this.send(message)}
+                />
 			</SafeAreaView>
 		);
 	}
@@ -95,7 +76,6 @@ later, when we implement Redux-Persist, this mapState function will be
 crucial.*/
 const mapState = (state, { navigation }) => ({
     user: state.user,
-    receiver: navigation.getParam('receivingUser'),
     messages: state.messages
   });
 

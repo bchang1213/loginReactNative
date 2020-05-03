@@ -4,7 +4,7 @@ import { persistStore, persistReducer } from 'redux-persist';
 import { AsyncStorage } from 'react-native';
 import socket from './socket';
 import users, { gotUsers, userOnline } from './users';
-import messages, { gotMessages, gotNewMessage } from './messages';
+import messages, { gotMessages, gotNewMessage, purgeMessages } from './messages';
 import user, { gotUser, removeUser } from './user';
 import focusPage, { currentPage, focusedVideo, defocusVideo } from './focusPage';
 
@@ -16,11 +16,11 @@ const persistConfig = {
     storage: AsyncStorage,
     whitelist: [
         'users',
-        'messages',
         'user'
     ],
     blacklist: [
         'focusPage',
+        'messages',
     ],
 };
 
@@ -38,6 +38,8 @@ let persistor = persistStore(store);
 let navigate = null;
 
 socket.on('priorMessages', messages => {
+    // console.log("HERE IS STORE:", persistor);
+    console.log("CHAT SOCKET TRIGGERED ON REACT N: ", messages);
     store.dispatch(gotMessages(messages));
 });
 
@@ -96,6 +98,7 @@ export const openChat = (user, receiver) => {
         user: user,
         receiver: receiver
     };
+    console.log("Store socket open chat activated.")
     socket.emit('chat', users);
 };
 
@@ -109,8 +112,9 @@ export const deleteFocus = (navigation) => {
     navigation.navigate('App');
 };
 
-export const sendMessage = (text, sender, receiver) => {
-    socket.emit('message', { text, sender, receiver });
+export const sendMessage = (text, sender, receiver, conversation_id) => {
+    console.log("Triggered send message: ",text, ", sender:", sender, ", receiv:", receiver, ", conv id:", conversation_id)
+    socket.emit('message', { text, sender, receiver , conversation_id});
 };
 
 

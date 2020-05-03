@@ -12,11 +12,9 @@ class ChatScreen extends React.Component {
 	}
 
 	componentDidMount () {
-		console.log("Users: ", this.props);
 	}
 
 	goToConversation = (receivingUser, index) => {
-        console.log("Going to convo: ", receivingUser);
 		this.props.navigation.navigate('Conversation', { receivingUser });
 	}
 
@@ -65,6 +63,7 @@ later, when we implement Redux-Persist, this mapState function will be
 crucial.*/
 //Filtering out the current user from amonst the 
 const mapState = (state) => ({
+	user: state.user,
     users: state.users.filter(user => user.id !== state.user.id)
   });
 
