@@ -57,7 +57,8 @@ socket.on('userOnline', user => {
 });
 
 socket.on('incomingMessage', message => {
-    store.dispatch(gotNewMessage(message));
+    console.log("Incoming message:", message.message[0])
+    store.dispatch(gotNewMessage(message.message[0]));
 });
 
 export const login = (credentials, navigation) => {
@@ -112,9 +113,11 @@ export const deleteFocus = (navigation) => {
     navigation.navigate('App');
 };
 
-export const sendMessage = (text, sender, receiver, conversation_id) => {
+export const sendMessage = (giftedChatObject, text, sender, receiver, conversation_id) => {
     console.log("Triggered send message: ",text, ", sender:", sender, ", receiv:", receiver, ", conv id:", conversation_id)
-    socket.emit('message', { text, sender, receiver , conversation_id});
+    var image = null;
+    var video = null;
+    socket.emit('message', { giftedChatObject, text, sender, receiver , conversation_id, image, video});
 };
 
 
