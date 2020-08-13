@@ -10,7 +10,7 @@ import { connect } from 'react-redux';
 import { focusOnVideo } from '../store';
 import { Video } from 'expo-av';
 
-class HomeScreen extends React.Component {
+class TaggerScreen extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -129,11 +129,11 @@ const mapState = (state) => ({
     focusPage: state.focusPage
 });
 
-HomeScreen.navigationOptions = {
+TaggerScreen.navigationOptions = {
     header: null,
 };
 
-export default connect(mapState) (HomeScreen);
+export default connect(mapState) (TaggerScreen);
 
 const styles = StyleSheet.create({
 	container: {

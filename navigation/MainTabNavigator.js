@@ -6,6 +6,7 @@ import { createBottomTabNavigator } from 'react-navigation-tabs';
 import TabBarIcon from '../components/TabBarIcon';
 import HomeScreen from '../screens/HomeScreen';
 import ChatScreen from '../screens/ChatScreen';
+import TaggerScreen from '../screens/TaggerScreen';
 import SettingsScreen from '../screens/SettingsScreen';
 
 const config = Platform.select({
@@ -35,6 +36,22 @@ HomeStack.navigationOptions = {
 };
 
 HomeStack.path = '';
+
+const TaggerStack = createStackNavigator(
+  {
+    Tagger: TaggerScreen,
+  },
+  config
+);
+
+TaggerStack.navigationOptions = {
+  tabBarLabel: 'Tagger',
+  tabBarIcon: ({ focused }) => (
+    <TabBarIcon focused={focused} name={Platform.OS === 'ios' ? 'ios-link' : 'md-link'} />
+  ),
+};
+
+TaggerStack.path = '';
 
 const ChatStack = createStackNavigator(
   {
@@ -71,6 +88,7 @@ SettingsStack.path = '';
 const tabNavigator = createBottomTabNavigator({
   HomeStack,
   ChatStack,
+  TaggerStack,
   SettingsStack,
 });
 
