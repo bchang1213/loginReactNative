@@ -7,6 +7,7 @@ import {
 	SafeAreaView,
 	Text,
     View,
+	Image,
 } from 'react-native';
 import { connect } from 'react-redux';
 
@@ -129,7 +130,10 @@ class Comments extends React.Component {
 								style={styles.btn}
 								onPress={this.submitComment}
 							>
-								<Text>Post</Text>
+								<Image
+									source={{uri: 'https://image.flaticon.com/icons/svg/1933/1933005.svg'}}
+									style={styles.send}
+								/>
 							</TouchableOpacity>
 						</View>
 					</View>
@@ -148,7 +152,10 @@ export default connect(mapState) (Comments);
 
 const styles = StyleSheet.create({
 	container: {
-
+		width: '100%',
+		justifyContent: 'center',
+		flex: 120,
+		flexDirection: 'column',
 	},
 	title: {
 		alignItems: 'center',
@@ -158,24 +165,34 @@ const styles = StyleSheet.create({
 		justifyContent: 'center',
 	},
 	formArea : {
-		width: 200,
+		width: '100%',
 		alignItems: 'center',
-		justifyContent: 'center',
+		justifyContent: 'space-between',
+		flex: 1,
+		flexDirection: 'row',
 	},
 	textInput: {
 		color: '#808080',
 		padding: 16,
 		marginBottom: 20,
-		backgroundColor: '#fff'
+		backgroundColor: '#fff',
+		width: '100%'
 	},
     btn: {
-		padding: 20,
+		padding: 10,
 		backgroundColor: '#01c853',
-		alignItems: 'center'
+		position: 'absolute',
+		width: 10,
+		height: 10
+	},
+	send: {
+		height: 10,
+		width: 10
 	},
 	commentCard : {
 		backgroundColor: '#808080',
-		height: 150
+		height: 150,
+		width: '100%',
 	},
 	commentBox: {
 		flexDirection: 'row',

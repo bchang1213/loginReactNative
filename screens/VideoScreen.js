@@ -1,5 +1,6 @@
 import React from 'react';
 import {
+	View,
 	StyleSheet,
 	Text,
 	SafeAreaView,
@@ -111,6 +112,7 @@ class VideoScreen extends React.Component {
 					{ this.props.video.name}
 				</Text>
 				: null }
+
 				{this.props.video.id && this.props.video.link ?
 				<Video
 				id={this.props.video.id}
@@ -124,6 +126,18 @@ class VideoScreen extends React.Component {
 				style={{ width: 300, height: 200 }}
 				/>
 				: null}
+
+				{!this.props.video.position_id ?
+				<View style={styles.tagContainer}>
+					<Text style={styles.tag}>Back</Text>
+					<Text style={styles.tag}>Mount</Text>
+					<Text style={styles.tag}>Guard</Text>
+					<Text style={styles.tag}>Side Control</Text>
+					<Text style={styles.tag}>Standing</Text>
+					<Text style={styles.tag}>Passing</Text>
+				</View>
+				: null }
+
 				<Comments />
 			</SafeAreaView>
 		);
@@ -152,7 +166,20 @@ const styles = StyleSheet.create({
     },
     videoTitle : {
         color: '#FFFFFF'
-    },
+	},
+	tagContainer : {
+		marginTop: 10,
+		flex: 1,
+		flexDirection: 'row',
+		height: 1
+	},
+	tag : {
+		backgroundColor: "#FFFFFF",
+		borderRadius: 40,
+		padding: 4,
+		width: 'auto',
+		height: 30
+	},
     wrapper : {
         flex: 1,
     },

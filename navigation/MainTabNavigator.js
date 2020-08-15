@@ -45,7 +45,7 @@ const TaggerStack = createStackNavigator(
 );
 
 TaggerStack.navigationOptions = {
-  tabBarLabel: 'Tagger',
+  tabBarLabel: 'Library',
   tabBarIcon: ({ focused }) => (
     <TabBarIcon focused={focused} name={Platform.OS === 'ios' ? 'ios-link' : 'md-link'} />
   ),

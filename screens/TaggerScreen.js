@@ -65,7 +65,7 @@ class TaggerScreen extends React.Component {
 	render() {
 		return (
 			<View style={styles.container}>
-                {/* { this.state.videos ?
+                { this.state.videos ?
                     <FlatList
                     data={this.state.videos}
                     keyExtractor={item => item.id}
@@ -89,32 +89,7 @@ class TaggerScreen extends React.Component {
                         </View>
                     }
                     />
-                : null } */}
-                <View>
-                    <Text>Watch White To Blue Belt Course</Text>
-                        <View>
-                            <View style={styles.videoSection}>
-                                <Text>Guard</Text>
-                            </View>
-                            <View style={styles.videoSection}>
-                                <Text>Passing</Text>
-                            </View>
-                            <View style={styles.videoSection}>
-                                <Text>Self-Defense</Text>
-                            </View>
-                            <View style={styles.videoSection}>
-                                <Text>Standing</Text>
-                            </View>
-                    </View>
-                </View>
-
-                <View>
-                    <Text>Watch Cobrinha Online</Text>
-                    <Image
-                        style={{ width: 100, height: 100, backgroundColor: 'red' }}
-                        source={{uri: 'https://reactnative.dev/img/tiny_logo.png'}}
-                    />
-                </View>
+                : null }
 
 			</View>
 		);
