@@ -10,6 +10,7 @@ import {
 	Image,
 } from 'react-native';
 import { connect } from 'react-redux';
+import reducer from '../store/users';
 
 class Comments extends React.Component {
 	constructor(props) {
@@ -105,40 +106,37 @@ class Comments extends React.Component {
 				<View style={styles.title}>
 					<Text>Comments</Text>
 				</View>
-				<View>
-					<View style={styles.commentContainer}>
-						<FlatList
-							data={this.state.comments}
-							keyExtractor = {item => item.id}
-							style={styles.commentCard}
-							renderItem={({item, index}) =>
-								<View style={styles.commentBox}>
-									<View style={styles.userInfoBox}>
-										<Text style={styles.userInfo} >{item.username} </Text>
-									</View>
-									<Text style={styles.comment} >{item.comment}</Text>
+				<View style={styles.commentContainer}>
+					<FlatList
+						data={this.state.comments}
+						keyExtractor = {item => item.id}
+						style={styles.commentCard}
+						renderItem={({item, index}) =>
+							<View style={styles.commentBox}>
+								<View style={styles.userInfoBox}>
+									<Text style={styles.userInfo} >{item.username} </Text>
 								</View>
-							}
-						/>
-						<View style={styles.formArea}>
-							<TextInput style={styles.textInput} placeholder={this.state.commentPlaceHolder}
-								ref={input => { this.textInput = input }}
-								onChangeText={ (text)=> this.startComment(text)}
-								underlineColorAndroid='transparent'
-							/>
-							<TouchableOpacity
-								style={styles.btn}
-								onPress={this.submitComment}
-							>
-								<Image
-									source={{uri: 'https://image.flaticon.com/icons/svg/1933/1933005.svg'}}
-									style={styles.send}
-								/>
-							</TouchableOpacity>
-						</View>
-					</View>
+								<Text style={styles.comment} >{item.comment}</Text>
+							</View>
+						}
+					/>
 				</View>
-
+				<View style={styles.formArea}>
+						<TextInput style={styles.textInput} placeholder={this.state.commentPlaceHolder}
+							ref={input => { this.textInput = input }}
+							onChangeText={ (text)=> this.startComment(text)}
+							underlineColorAndroid='transparent'
+						/>
+						<TouchableOpacity
+							style={styles.btn}
+							onPress={this.submitComment}
+						>
+							<Image
+								source={{ uri: 'https://reactjs.org/logo-og.png' }}
+								style={styles.send}
+							/>
+						</TouchableOpacity>
+					</View>
 			</SafeAreaView>
 		);
 	}
@@ -153,9 +151,10 @@ export default connect(mapState) (Comments);
 const styles = StyleSheet.create({
 	container: {
 		width: '100%',
-		justifyContent: 'center',
-		flex: 120,
+		justifyContent: 'space-between',
+		flex: 0.8,
 		flexDirection: 'column',
+		backgroundColor: 'red'
 	},
 	title: {
 		alignItems: 'center',
@@ -163,35 +162,35 @@ const styles = StyleSheet.create({
 	commentContainer: {
 		alignItems: 'center',
 		justifyContent: 'center',
+		flex: 1,
 	},
 	formArea : {
 		width: '100%',
-		alignItems: 'center',
-		justifyContent: 'space-between',
-		flex: 1,
 		flexDirection: 'row',
+		height: 40,
+		alignItems: 'center',
+		justifyContent: 'flex-start',
 	},
 	textInput: {
 		color: '#808080',
-		padding: 16,
-		marginBottom: 20,
 		backgroundColor: '#fff',
-		width: '100%'
+		width: '90%',
+		height: '100%',
 	},
     btn: {
-		padding: 10,
-		backgroundColor: '#01c853',
-		position: 'absolute',
-		width: 10,
-		height: 10
+		flex: 1,
+		height: '100%',
+		alignItems: 'center',
+		justifyContent: 'flex-start',
 	},
 	send: {
-		height: 10,
-		width: 10
+		height: '100%',
+		width: '100%',
+		backgroundColor: "blue",
+		color: 'black',
 	},
 	commentCard : {
 		backgroundColor: '#808080',
-		height: 150,
 		width: '100%',
 	},
 	commentBox: {

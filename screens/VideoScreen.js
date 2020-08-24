@@ -159,19 +159,19 @@ const styles = StyleSheet.create({
 	container: {
 		flex: 1,
 		alignItems: "center",
+		justifyContent: 'flex-start',
 		backgroundColor: "#3b3e40",
-		paddingLeft: 40,
-		paddingRight: 40,
 		borderColor: "red"
     },
     videoTitle : {
         color: '#FFFFFF'
 	},
 	tagContainer : {
-		marginTop: 10,
-		flex: 1,
+		flex: 0.1,
 		flexDirection: 'row',
-		height: 1
+		marginBottom: 10,
+		marginTop: 10,
+		backgroundColor: 'blue'
 	},
 	tag : {
 		backgroundColor: "#FFFFFF",
@@ -181,11 +181,11 @@ const styles = StyleSheet.create({
 		height: 30
 	},
     wrapper : {
-        flex: 1,
+
     },
     videoCard: {
+		flex: 1,
         backgroundColor: "#121212",
-        flex: 1,
         padding: 10,
         flexDirection: 'column',
         justifyContent: 'space-around',
