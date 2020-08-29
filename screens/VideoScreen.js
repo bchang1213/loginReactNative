@@ -6,6 +6,8 @@ import {
 	SafeAreaView,
     TouchableOpacity
 } from 'react-native';
+import { ScreenOrientation } from 'expo';
+import { DeviceMotion } from 'expo-sensors';
 import Comments from '../components/Comments';
 import { connect } from 'react-redux';
 import { deleteFocus } from '../store';
@@ -96,6 +98,87 @@ class VideoScreen extends React.Component {
 		this.player = ref;
 	};
 
+
+    _onFullscreenUpdate = ({fullscreenUpdate, status}) => {
+        /* values of fullScreenUpdate
+            0 -> FULLSCREEN_UPDATE_PLAYER_WILL_PRESENT
+            1 -> FULLSCREEN_UPDATE_PLAYER_DID_PRESENT
+            2 -> FULLSCREEN_UPDATE_PLAYER_WILL_DISMISS
+            3 -> FULLSCREEN_UPDATE_PLAYER_DID_DISMISS
+        */
+
+        //If the fullscreen updating is closing, then remove any listeners.
+        if (fullscreenUpdate === 3 || fullscreenUpdate === 2) {
+            DeviceMotion.removeAllListeners();
+        }
+
+        ScreenOrientation.unlockAsync();
+        ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.ALL)
+        .catch(error => {});
+
+        ////if the DeviceMotion api is available and the full screen is opening
+        //if (DeviceMotion.isAvailableAsync() && fullscreenUpdate === 1) {
+        //    DeviceMotion.addListener((listener) => {
+        //        // {
+        //        //   "acceleration": Object {
+        //        //     "x": 0.000983891892246902,
+        //        //     "y": 0.00334930419921875,
+        //        //     "z": -0.0012129282113164663,
+        //        //   },
+        //        //   "accelerationIncludingGravity": Object {
+        //        //     "x": 0.001967783784493804,
+        //        //     "y": -9.803301811218262,
+        //        //     "z": -0.0024258564226329327,
+        //        //   },
+        //        //   "orientation": 0,
+        //        //   "rotation": Object {
+        //        //     "alpha": -0.8989938497543335,
+        //        //     "beta": NaN,
+        //        //     "gamma": 0.8989896178245544,
+        //        //   },
+        //        //   "rotationRate": Object {
+        //        //     "alpha": 0,
+        //        //     "beta": 0,
+        //        //     "gamma": 0,
+        //        //   }
+                
+        //        //phone was rotated horizontally, right side landscape
+        //        if (listener.orientation === 90) {
+        //            console.log("rotated hor");
+        //            ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.LANDSCAPE_RIGHT)
+        //            .catch(error => {});
+
+        //        }
+
+        //        //left landscape view
+        //        if (listener.orientation === -90) {
+        //            console.log("left landscape");
+        //            ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.LANDSCAPE_LEFT)
+        //            .catch(error => {});
+
+        //        }
+
+        //        //upside down orientation
+        //        if (listener.orientation === 180) {
+        //            console.log("upsidedown");
+        //            ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT_DOWN)
+        //            .catch(error => {});
+
+        //        }
+
+        //        //rightside up, vertical view
+        //        if (listener.orientation === 0) {
+        //            console.log("normal vertical view");
+        //            ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT_UP)
+        //            .catch(error => {});
+
+        //        }
+
+        //    });
+        //}
+
+    };
+
 	render() {
 		return (
 			<SafeAreaView style={styles.container}>
@@ -122,12 +205,13 @@ class VideoScreen extends React.Component {
 				isMuted={false}
 				ref={this.handleVideoMount}
 				useNativeControls={true}
-				resizeMode="cover"
-				style={{ width: 300, height: 200 }}
+				resizeMode="contain"
+                style={{ width: 300, height: 200 }}
+                onFullscreenUpdate={this._onFullscreenUpdate}
 				/>
 				: null}
 
-				{!this.props.video.position_id ?
+				{/* {!this.props.video.position_id ?
 				<View style={styles.tagContainer}>
 					<Text style={styles.tag}>Back</Text>
 					<Text style={styles.tag}>Mount</Text>
@@ -136,7 +220,7 @@ class VideoScreen extends React.Component {
 					<Text style={styles.tag}>Standing</Text>
 					<Text style={styles.tag}>Passing</Text>
 				</View>
-				: null }
+				: null } */}
 
 				<Comments />
 			</SafeAreaView>
