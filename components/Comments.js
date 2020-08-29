@@ -152,7 +152,7 @@ const styles = StyleSheet.create({
 	container: {
 		width: '100%',
 		justifyContent: 'space-between',
-		flex: 1,
+		flex: 0.8,
 		flexDirection: 'column',
 		backgroundColor: 'red'
 	},

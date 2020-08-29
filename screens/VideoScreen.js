@@ -92,6 +92,10 @@ class VideoScreen extends React.Component {
     
     goBack = () => {
 		deleteFocus(this.props.navigation);
+	}
+	
+	goQuiz = () => {
+		this.props.navigation.navigate('Quiz');
     }
 
 	handleVideoMount = ref => {
@@ -182,19 +186,28 @@ class VideoScreen extends React.Component {
 	render() {
 		return (
 			<SafeAreaView style={styles.container}>
-                <TouchableOpacity
-                    style={styles.btn}
-                    onPress={this.goBack}
-                >
-                    <Text>Go Back</Text>
-                </TouchableOpacity>
-				{this.props.video.name ?
-				<Text
-				style={styles.videoTitle}
-				>
-					{ this.props.video.name}
-				</Text>
-				: null }
+				<View style={styles.btnContainer}>
+					<TouchableOpacity
+						style={styles.btn}
+						onPress={this.goBack}
+					>
+						<Text>Prev. Lesson</Text>
+					</TouchableOpacity>
+
+					<TouchableOpacity
+						style={styles.btn}
+						onPress={this.goBack}
+					>
+						<Text>Back to Course Page</Text>
+					</TouchableOpacity>
+
+					<TouchableOpacity
+						style={styles.btn}
+						onPress={this.goBack}
+					>
+						<Text>Next Lesson</Text>
+					</TouchableOpacity>
+				</View>
 
 				{this.props.video.id && this.props.video.link ?
 				<Video
@@ -222,6 +235,24 @@ class VideoScreen extends React.Component {
 				</View>
 				: null } */}
 
+				{this.props.video.name ?
+				<Text
+				style={styles.videoTitle}
+				>
+					{ this.props.video.name}
+				</Text>
+				: null }
+				<Text style={styles.description}>
+					lorum ipsum sic biter bater be tlfksdfj sdfksdfl lorum ipsum sic biter bater be tlfksdfj sdfksdfl lorum ipsum sic biter bater be tlfksdfj sdfksdfl lorum ipsum sic biter bater be tlfksdfj sdfksdfl 
+				</Text>
+
+				<TouchableOpacity
+						style={styles.quizButton}
+						onPress={this.goQuiz}
+					>
+						<Text>Start Quiz</Text>
+				</TouchableOpacity>
+
 				<Comments />
 			</SafeAreaView>
 		);
@@ -243,7 +274,7 @@ const styles = StyleSheet.create({
 	container: {
 		flex: 1,
 		alignItems: "center",
-		justifyContent: 'flex-start',
+		justifyContent: 'space-between',
 		backgroundColor: "#3b3e40",
 		borderColor: "red"
     },
@@ -276,16 +307,31 @@ const styles = StyleSheet.create({
 		marginTop: 10,
 		height: 100
 	},
+
+	description: {
+		width: "80%",
+	},
+
 	textInput: {
 		alignSelf: "stretch",
 		padding: 16,
 		marginBottom: 20,
 		backgroundColor: "#fff"
 	},
+
+	btnContainer: {
+		flexDirection: 'row',
+		justifyContent: 'space-between',
+	},
+
     btn: {
-		alignSelf: "stretch",
-		padding: 20,
+		padding: 2,
 		backgroundColor: "#01c853",
-		alignItems: "center"
+		margin: 10
+	},
+
+	quizButton: {
+		padding: 2,
+		backgroundColor: "#01c853",
 	}
 });
