@@ -187,7 +187,6 @@ const styles = StyleSheet.create({
 		height: '100%',
 		width: '100%',
 		backgroundColor: "blue",
-		color: 'black',
 	},
 	commentCard : {
 		backgroundColor: '#808080',

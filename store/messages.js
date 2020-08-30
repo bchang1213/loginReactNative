@@ -7,7 +7,6 @@ export const purgeMessages = () => ({ type: PURGE_MESSAGES });
 const reducer = (state = [], action) => {
 	switch (action.type) {
 		case GOT_MESSAGES:
-			console.log("got redis store: ", action.messages)
 			return action.messages ? action.messages : [];
 		case GOT_NEW_MESSAGE:
 			var newState = [...state];

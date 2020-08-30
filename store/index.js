@@ -7,8 +7,9 @@ import users, { gotUsers, userOnline } from './users';
 import messages, { gotMessages, gotNewMessage, purgeMessages } from './messages';
 import user, { gotUser, removeUser } from './user';
 import focusPage, { currentPage, focusedVideo, defocusVideo } from './focusPage';
+import videos, { deleteVideos, storeVideos } from './videos';
 
-const reducers = combineReducers({ users, messages, user, focusPage });
+const reducers = combineReducers({ users, messages, user, focusPage, videos });
 
 // Middleware: Redux Persist Config
 const persistConfig = {
@@ -16,7 +17,8 @@ const persistConfig = {
     storage: AsyncStorage,
     whitelist: [
         'users',
-        'user'
+        'user',
+        'videos'
     ],
     blacklist: [
         'focusPage',
@@ -38,8 +40,6 @@ let persistor = persistStore(store);
 let navigate = null;
 
 socket.on('priorMessages', messages => {
-    // console.log("HERE IS STORE:", persistor);
-    console.log("CHAT SOCKET TRIGGERED ON REACT N: ", messages);
     store.dispatch(gotMessages(messages));
 });
 
@@ -57,7 +57,6 @@ socket.on('userOnline', user => {
 });
 
 socket.on('incomingMessage', message => {
-    console.log("Incoming message:", message.message[0])
     store.dispatch(gotNewMessage(message.message[0]));
 });
 
@@ -113,8 +112,12 @@ export const deleteFocus = (navigation) => {
     navigation.navigate('App');
 };
 
+export const saveVideosFromDB = (videosArray) => {
+    store.dispatch(storeVideos(videosArray));
+};
+
 export const sendMessage = (giftedChatObject, text, sender, receiver, conversation_id) => {
-    console.log("Triggered send message: ",text, ", sender:", sender, ", receiv:", receiver, ", conv id:", conversation_id)
+    // console.log("Triggered send message: ",text, ", sender:", sender, ", receiv:", receiver, ", conv id:", conversation_id)
     var image = null;
     var video = null;
     socket.emit('message', { giftedChatObject, text, sender, receiver , conversation_id, image, video});
@@ -129,3 +132,4 @@ export {
 export * from './users';
 export * from './messages';
 export * from './focusPage';
+export * from './videos';

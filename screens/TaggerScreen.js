@@ -9,18 +9,18 @@ import {
 import { connect } from 'react-redux';
 import { focusOnVideo } from '../store';
 import { Video } from 'expo-av';
+import { saveVideosFromDB } from '../store';
 
 class TaggerScreen extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-            videos: null
         };
         
 	}
 	//Called Once on client
 	componentDidMount () {
-        if(this.state.videos === null) {
+        if(!this.props.videos.length) {
             this.getVideos();
         }
 	}
@@ -44,7 +44,7 @@ class TaggerScreen extends React.Component {
 		
 			if(res.success) {
                 //Make videos available to component for display render.
-                this.setState({videos: res.success});
+                saveVideosFromDB(res.success);
 			}
 
 			else {
@@ -65,9 +65,9 @@ class TaggerScreen extends React.Component {
 	render() {
 		return (
 			<View style={styles.container}>
-                { this.state.videos ?
+                { this.props.videos ?
                     <FlatList
-                    data={this.state.videos}
+                    data={this.props.videos}
                     keyExtractor={item => item.id}
                     renderItem={({item}) =>
                         <View style={styles.videoCard}>
@@ -101,7 +101,8 @@ later, when we implement Redux-Persist, this mapState function will be
 crucial.*/
 const mapState = (state) => ({
     user: state.user,
-    focusPage: state.focusPage
+    focusPage: state.focusPage,
+    videos: state.videos
 });
 
 TaggerScreen.navigationOptions = {

@@ -61,18 +61,6 @@ const styles = StyleSheet.create({
         paddingLeft: 40,
         paddingRight: 40
     },
-    header : {
-        fontSize: 24,
-        marginBottom: 60,
-        color: "#fff",
-        fontWeight: "bold",
-    },
-    textInput: {
-        alignSelf: "stretch",
-        padding: 16,
-        marginBottom: 20,
-        backgroundColor: "#fff"
-    },
     btn: {
         alignSelf: "stretch",
         padding: 20,

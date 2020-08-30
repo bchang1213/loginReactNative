@@ -12,6 +12,7 @@ import Comments from '../components/Comments';
 import { connect } from 'react-redux';
 import { deleteFocus } from '../store';
 import { Video, Audio } from 'expo-av';
+import reducer from '../store/users';
 
 class VideoScreen extends React.Component {
 	constructor(props) {
@@ -112,9 +113,9 @@ class VideoScreen extends React.Component {
         */
 
         //If the fullscreen updating is closing, then remove any listeners.
-        if (fullscreenUpdate === 3 || fullscreenUpdate === 2) {
-            DeviceMotion.removeAllListeners();
-        }
+        // if (fullscreenUpdate === 3 || fullscreenUpdate === 2) {
+        //     DeviceMotion.removeAllListeners();
+        // }
 
         ScreenOrientation.unlockAsync();
         ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.ALL)
@@ -235,15 +236,27 @@ class VideoScreen extends React.Component {
 				</View>
 				: null } */}
 
+				{!this.props.video.position_id ?
+				<View style={styles.tagContainer}>
+					<Text style={styles.tag}>Back</Text>
+					<Text style={styles.tag}>Mount</Text>
+					<Text style={styles.tag}>Guard</Text>
+					<Text style={styles.tag}>Side Control</Text>
+					<Text style={styles.tag}>Standing</Text>
+					<Text style={styles.tag}>Passing</Text>
+				</View>
+				: null }
+
 				{this.props.video.name ?
 				<Text
 				style={styles.videoTitle}
 				>
-					{ this.props.video.name}
+					{ this.props.video.name }
 				</Text>
 				: null }
+
 				<Text style={styles.description}>
-					lorum ipsum sic biter bater be tlfksdfj sdfksdfl lorum ipsum sic biter bater be tlfksdfj sdfksdfl lorum ipsum sic biter bater be tlfksdfj sdfksdfl lorum ipsum sic biter bater be tlfksdfj sdfksdfl 
+					{ this.props.video.description }
 				</Text>
 
 				<TouchableOpacity
